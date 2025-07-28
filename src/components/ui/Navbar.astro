@@ -6,96 +6,57 @@ import SocialIcons from './SocialIcons.astro'
 const currentPath = Astro.url.pathname;
 ---
 
+<!-- Invisible anchor for Home -->
+<div id="top"></div>
+
 <nav class="navbar fixed top-0 left-0 right-0 z-50 bg-base-100" style="background-color: #f8f9fa; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
   <!-- Site Title -->
   <div class="flex-1 pl-8">
-    <a href="#top" class="text-2xl font-bold gradient-text home-link">{profile.fullName}</a>
+    <a href="#top" class="text-2xl font-bold gradient-text">{profile.fullName}</a>
   </div>
 
   <!-- Desktop Menu (centered) -->
   <div class="flex-1 hidden md:flex justify-center absolute left-1/2 transform -translate-x-1/2">
     <ul class="menu menu-horizontal px-1">
-      <li><a href="#top" class="text-lg nav-link home-link">Home</a></li>
-      <li><a href="#publications" class="text-lg nav-link publications-link">Publications</a></li>
+      <li><a href="#top" class="text-lg nav-link">Home</a></li>
+      <li><a href="#publications" class="text-lg nav-link">Publications</a></li>
     </ul>
   </div>
 
-  <!-- Mobile Menu + Social Icons, stacked vertically -->
+  <!-- Mobile Menu + Social Icons -->
   <div class="flex-none md:hidden flex flex-col items-end pr-4 space-y-2">
-    <!-- Hamburger Toggle -->
     <div class="relative">
       <button id="dropdownTrigger" class="btn btn-ghost">
+        <!-- hamburger icon -->
         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
         </svg>
       </button>
       <ul id="dropdownMenu" class="menu menu-compact dropdown-content mt-1 p-2 shadow bg-base-100 rounded-box w-52 z-50 hidden absolute right-0">
-        <li><a href="#top" class="block py-1 px-2 home-link">Home</a></li>
-        <li><a href="#publications" class="block py-1 px-2 publications-link">Publications</a></li>
+        <li><a href="#top" class="block py-1 px-2">Home</a></li>
+        <li><a href="#publications" class="block py-1 px-2">Publications</a></li>
       </ul>
     </div>
-    <!-- Social Icons below hamburger, hidden on very narrow screens -->
     <div class="hidden sm:flex items-center gap-4">
       <SocialIcons />
     </div>
   </div>
 
-  <!-- Desktop‑only Social Icons -->
+  <!-- Desktop Icons -->
   <div class="hidden md:flex items-center gap-4 pr-8">
     <SocialIcons />
   </div>
 </nav>
 
-<!-- Spacer to prevent content hiding behind fixed navbar -->
+<!-- Spacer -->
 <div class="h-16"></div>
 
-<script>
-  // Smooth scrolling setup
-  function setupSmoothScroll() {
-    const homeLinks = document.querySelectorAll('.home-link');
-    const publicationsLink = document.querySelector('.publications-link');
-    homeLinks.forEach(link => {
-      link.removeEventListener('click', handleHomeClick);
-      link.addEventListener('click', handleHomeClick);
-    });
-    if (publicationsLink) {
-      publicationsLink.removeEventListener('click', handlePublicationsClick);
-      publicationsLink.addEventListener('click', handlePublicationsClick);
-    }
-  }
-  function handleHomeClick(e) {
-    e.preventDefault();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-  function handlePublicationsClick(e) {
-    e.preventDefault();
-    const section = document.getElementById('publications');
-    if (section) {
-      const offset = section.offsetTop - 64;
-      window.scrollTo({ top: offset, behavior: 'smooth' });
-    }
-  }
-
-  document.addEventListener('DOMContentLoaded', () => {
-    setupSmoothScroll();
-
-    // Dropdown toggle
-    const trigger = document.getElementById('dropdownTrigger');
-    const menu = document.getElementById('dropdownMenu');
-    if (trigger && menu) {
-      trigger.addEventListener('click', e => {
-        e.stopPropagation();
-        menu.classList.toggle('hidden');
-      });
-      // Hide when clicking outside
-      document.addEventListener('click', () => {
-        if (!menu.classList.contains('hidden')) menu.classList.add('hidden');
-      });
-    }
-  });
-  window.addEventListener('load', setupSmoothScroll);
-  document.addEventListener('astro:page-load', setupSmoothScroll);
-</script>
+<style is:global>
+  /* Enable smooth animated scrolling for native anchors */
+  html { scroll-behavior: smooth; }
+  /* Offset section targets to account for fixed navbar height */
+  #publications { scroll-margin-top: 4rem; }
+</style>
 
 <style>
   .gradient-text {
@@ -107,10 +68,8 @@ const currentPath = Astro.url.pathname;
     animation: gradient 8s linear infinite;
     text-shadow: 0 0 10px rgba(255,255,255,0.1);
   }
-  @keyframes gradient {
-    0% { background-position: 0% center; }
-    100% { background-position: 200% center; }
-  }
+  @keyframes gradient { 0% { background-position: 0% center; } 100% { background-position: 200% center; } }
+
   .nav-link {
     position: relative;
     transition: all 0.3s ease;
@@ -132,8 +91,32 @@ const currentPath = Astro.url.pathname;
     transform-origin: right;
     transition: transform 0.3s ease;
   }
-  .nav-link:hover { transform: translateY(-2px); text-shadow: 0 0 8px rgba(0,0,0,0.2); }
-  .nav-link:hover::before { transform: scaleX(1); transform-origin: left; }
-  .nav-link:active { transform: scale(0.85); transition: all 0.05s ease; }
-  .ripple { display: none; }
+  .nav-link:hover {
+    transform: translateY(-2px);
+    text-shadow: 0 0 8px rgba(0,0,0,0.2);
+  }
+  .nav-link:hover::before {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+  .nav-link:active {
+    transform: scale(0.85);
+    transition: all 0.05s ease;
+  }
 </style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const trigger = document.getElementById('dropdownTrigger');
+    const menu = document.getElementById('dropdownMenu');
+    if (trigger && menu) {
+      trigger.addEventListener('click', e => {
+        e.stopPropagation();
+        menu.classList.toggle('hidden');
+      });
+      document.addEventListener('click', () => {
+        if (!menu.classList.contains('hidden')) menu.classList.add('hidden');
+      });
+    }
+  });
+</script>
