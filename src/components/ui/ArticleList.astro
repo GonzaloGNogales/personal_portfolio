@@ -1,0 +1,225 @@
+---
+import { Image } from 'astro:assets'
+import RCI3DCAteaser from '@/assets/RCID3DCAteaser.jpg'
+import RCI3DCApaper from '@/assets/RCID3DCApaper.pdf'
+
+interface Props {
+  listTitle: string;
+  listItems: {
+    title: string;
+    authors: string;
+    journal: string;
+    time: string;
+    image?: string;
+    pdfLink?: string;
+    videoLink?: string;
+    webLink?: string;
+  }[];
+}
+const {listTitle, listItems} = Astro.props
+
+// Function to format authors with first author highlighted
+function formatAuthors(authors: string) {
+  const authorList = authors.split(', ');
+  if (authorList.length === 1) {
+    return `<span class="font-bold text-black">${authorList[0]}</span>`;
+  }
+  
+  const firstAuthor = `<span class="font-bold text-black">${authorList[0]}</span>`;
+  const remainingAuthors = authorList.slice(1).join(', ');
+  
+  return `${firstAuthor}, ${remainingAuthors}`;
+}
+---
+
+<h2 class='text-3xl font-bold mb-8'>{listTitle}</h2>
+<div class='space-y-6'>
+	{
+		listItems.map(item => (
+			<div class='p-6 rounded-lg text-base-content bg-base-200'>
+				<div class='flex gap-6'>
+					<!-- Publication image -->
+					<div class='w-56 h-40 flex-shrink-0'>
+						<Image
+							src={RCI3DCAteaser}
+							alt={item.title}
+							class='w-full h-full object-cover rounded-lg'
+						/>
+					</div>
+					
+					<!-- Publication content -->
+					<div class='flex-1'>
+						<h3 class='text-xl font-semibold mb-2'>{item.title}</h3>
+						<p class='text-sm text-base-content/70 mb-2 italic' set:html={formatAuthors(item.authors)}></p>
+						<p class='text-base-content/80 mb-3'>
+							{item.journal} • {item.time}
+						</p>
+						
+						<!-- Action buttons -->
+						<div class='flex gap-3'>
+							<a 
+								href={RCI3DCApaper}
+								class='btn btn-sm custom-pdf-btn'
+								target='_blank'
+								rel='noopener noreferrer'
+							>
+								<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 16 16">
+									<path fill-rule="evenodd" d="M14 4.5V14a2 2 0 0 1-2 2h-1v-1h1a1 1 0 0 0 1-1V4.5h-2A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v9H2V2a2 2 0 0 1 2-2h5.5zM1.6 11.85H0v3.999h.791v-1.342h.803q.43 0 .732-.173.305-.175.463-.474a1.4 1.4 0 0 0 .161-.677q0-.375-.158-.677a1.2 1.2 0 0 0-.46-.477q-.3-.18-.732-.179m.545 1.333a.8.8 0 0 1-.085.38.57.57 0 0 1-.238.241.8.8 0 0 1-.375.082H.788V12.48h.66q.327 0 .512.181.185.183.185.522m1.217-1.333v3.999h1.46q.602 0 .998-.237a1.45 1.45 0 0 0 .595-.689q.196-.45.196-1.084 0-.63-.196-1.075a1.43 1.43 0 0 0-.589-.68q-.396-.234-1.005-.234zm.791.645h.563q.371 0 .609.152a.9.9 0 0 1 .354.454q.118.302.118.753a2.3 2.3 0 0 1-.068.592 1.1 1.1 0 0 1-.196.422.8.8 0 0 1-.334.252 1.3 1.3 0 0 1-.483.082h-.563zm3.743 1.763v1.591h-.79V11.85h2.548v.653H7.896v1.117h1.606v.638z"/>
+								</svg>
+								PDF
+							</a>
+							<a 
+								href={item.videoLink || '#'}
+								class='btn btn-sm custom-video-btn'
+								target='_blank'
+								rel='noopener noreferrer'
+							>
+								<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 16 16">
+									<path d="M6.79 5.093A.5.5 0 0 0 6 5.5v5a.5.5 0 0 0 .79.407l3.5-2.5a.5.5 0 0 0 0-.814z"/>
+									<path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm15 0a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1z"/>
+								</svg>
+								Video
+							</a>
+							<a 
+								href={item.webLink || '#'}
+								class='btn btn-sm custom-web-btn'
+								target='_blank'
+								rel='noopener noreferrer'
+							>
+								<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 16 16">
+									<path fill-rule="evenodd" d="M8.636 3.5a.5.5 0 0 0-.5-.5H1.5A1.5 1.5 0 0 0 0 4.5v10A1.5 1.5 0 0 0 1.5 16h10a1.5 1.5 0 0 0 1.5-1.5V7.864a.5.5 0 0 0-1 0V14.5a.5.5 0 0 1-.5.5h-10a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5h6.636a.5.5 0 0 0 .5-.5"/>
+									<path fill-rule="evenodd" d="M16 .5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793L6.146 9.146a.5.5 0 1 0 .708.708L15 1.707V5.5a.5.5 0 0 0 1 0z"/>
+								</svg>
+								Web
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		))
+	}
+</div>
+
+<style>
+	/* Simple button styles with basic hover effects */
+	.custom-pdf-btn {
+		background: transparent;
+		border: 2px solid #E84855;
+		color: #E84855;
+		transition: all 0.15s ease;
+		position: relative;
+		overflow: hidden;
+		z-index: 1;
+	}
+
+	.custom-pdf-btn:hover {
+		color: white !important;
+		transform: scale(1.10);
+		box-shadow: 0 0 20px rgba(232, 72, 85, 0.6);
+	}	
+
+	.custom-pdf-btn::before {
+		content: '';
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		width: 0;
+		height: 0;
+		background: #E84855;
+		transition: all 0.15s ease;
+		z-index: -1;
+		border-radius: 50%;
+		transform: translate(-50%, -50%);
+	}
+
+	.custom-pdf-btn:hover {
+		color: white !important;
+		transform: scale(1.05);
+		box-shadow: 0 0 20px rgba(232, 72, 85, 0.6);
+		border-color: white;
+	}
+
+	.custom-pdf-btn:hover::before {
+		width: 200%;
+		height: 200%;
+	}
+
+	.custom-video-btn {
+		background: transparent;
+		border: 2px solid #FF8A3D;
+		color: #FF8A3D;
+		transition: all 0.15s ease;
+		position: relative;
+		overflow: hidden;
+		z-index: 1;
+	}
+
+	.custom-video-btn::before {
+		content: '';
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		width: 0;
+		height: 0;
+		background: #FF8A3D;
+		transition: all 0.15s ease;
+		z-index: -1;
+		border-radius: 50%;
+		transform: translate(-50%, -50%);
+	}
+
+	.custom-video-btn:hover {
+		color: white !important;
+		transform: scale(1.05);
+		box-shadow: 0 0 20px rgba(255, 138, 61, 0.6);
+		border-color: white;
+	}
+
+	.custom-video-btn:hover::before {
+		width: 200%;
+		height: 200%;
+	}
+
+	.custom-web-btn {
+		background: transparent;
+		border: 2px solid #2C8CFF;
+		color: #2C8CFF;
+		transition: all 0.15s ease;
+		position: relative;
+		overflow: hidden;
+		z-index: 1;
+	}
+
+	.custom-web-btn::before {
+		content: '';
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		width: 0;
+		height: 0;
+		background: #2C8CFF;
+		transition: all 0.15s ease;
+		z-index: -1;
+		border-radius: 50%;
+		transform: translate(-50%, -50%);
+	}
+
+	.custom-web-btn:hover {
+		color: white !important;
+		transform: scale(1.05);
+		box-shadow: 0 0 20px rgba(44, 140, 255, 0.6);
+		border-color: white;
+	}
+
+	.custom-web-btn:hover::before {
+		width: 200%;
+		height: 200%;
+	}
+
+	/* Icon color change on hover */
+	.custom-pdf-btn:hover svg,
+	.custom-video-btn:hover svg,
+	.custom-web-btn:hover svg {
+		color: white !important;
+	}
+</style>

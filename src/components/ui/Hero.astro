@@ -1,0 +1,75 @@
+---
+import { Image } from 'astro:assets'
+
+import SocialIcons from './SocialIcons.astro'
+
+
+const {fullName, title, institute, profilePicture} = Astro.props
+---
+<div class='flex-1'>
+  <h1 class='text-4xl font-bold mb-4'>
+    Hola! I'm <span class='text-turquoise'>{fullName}</span>
+  </h1>
+  <p class='text-xl text-gray-600 mb-4'>{title}{institute ? ` at ${institute}` : ''}</p>
+  <p class='text-lg mb-6 text-justify'>
+    I am a last year PhD student under the supervision of <a href="https://dancasas.github.io/" class="university-link" target="_blank" rel="noopener noreferrer"><b>Prof. Dr. Dan Casas</b></a> 
+    and <a href="https://scholar.google.com/citations?user=5b5lpdjyjg0C&hl=es" class="university-link" target="_blank" rel="noopener noreferrer"><b>Prof. Dr. Marc Comino-Trinidad</b></a>
+    at <a href="https://mslab.es/" class="university-link" target="_blank" rel="noopener noreferrer"><b>University Rey Juan Carlos (MSLab)</b></a> in Madrid, Spain. 
+    My research interests lie at the intersection of <b>Computer Graphics</b>, <b>Physics Simulation</b> and <b>Machine Learning</b>, 
+    with a particular focus on developing novel ways of enhancing 3D Graphics realism, control and interactivity with AI.
+  </p>
+  <p class='text-lg mb-6 text-justify'>
+    I completed two research internships at <a href="https://research.adobe.com/" class="university-link" target="_blank" rel="noopener noreferrer">
+      <b>Adobe Research</b></a>. In <b>2024</b>, I joined the 
+    <a href="https://research.adobe.com/careers/paris/" class="university-link" target="_blank" rel="noopener noreferrer">
+      <b>Paris</b></a> office for a <b>six-month internship</b>, 
+    where I worked with Drs. <a href="https://elenagarces.es/" class="university-link" target="_blank" rel="noopener noreferrer">Elena Garcés</a>, 
+    <a href="https://dannykaufman.io/" class="university-link" target="_blank" rel="noopener noreferrer">Danny Kaufman</a>, 
+    <a href="https://zhenchen-jay.github.io/" class="university-link" target="_blank" rel="noopener noreferrer">Zhen Chen</a> and 
+    <a href="https://research.adobe.com/person/rosalie-martin/" class="university-link" target="_blank" rel="noopener noreferrer">Rosalie Martin</a>.
+
+    And then in <b>2025</b>, I completed a <b>summer internship</b> at the <a href="https://research.adobe.com/careers/san-jose/" class="university-link" target="_blank" rel="noopener noreferrer">
+      <b>San Jose</b></a> office, 
+    working with Drs. <a href="https://zhouyisjtu.github.io/" class="university-link" target="_blank" rel="noopener noreferrer">Yi Zhou</a>, 
+    <a href="https://yiconghong.me/" class="university-link" target="_blank" rel="noopener noreferrer">Yicong Hong</a> and 
+    <a href="https://chongjiange.github.io/" class="university-link" target="_blank" rel="noopener noreferrer">Chongjian Ge</a>.
+  </p>
+  <p class='text-lg mb-6 text-justify'>
+    I am dedicated and enthusiastic, with a constant desire to grow and learn 
+    from every experience and person around me. Passionate about computer graphics 
+    and research, I strive to push my own limits and continuously improve.
+  </p>
+  <div class='flex gap-4'>
+    <SocialIcons />
+  </div>
+</div>
+<div class='w-80 h-96 lg:block hidden flex items-center justify-center media-center'>
+  <!-- Add your profile image -->
+  <Image
+    src={profilePicture}
+    alt={fullName}
+    class='rounded-lg object-cover w-full h-full'
+  />
+</div>
+
+<style>
+  .text-turquoise {
+    color: #40E0D0;
+  }
+
+  .media-center img {
+    transform: translateY(-35px);  /* adjust “-8px” to taste */
+  }
+  .university-link {
+    color: #d97706;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border-bottom: 1px solid transparent;
+  }
+  
+  .university-link:hover {
+    color: #f59e0b;
+    border-bottom: 1px solid #f59e0b;
+    text-shadow: 0 0 8px rgba(217, 119, 6, 0.3);
+  }
+</style>
