@@ -2,6 +2,7 @@
 import { Image } from 'astro:assets'
 import RCI3DCAteaser from '@/assets/RCID3DCAteaser.jpg'
 import RCI3DCApaper from '@/assets/RCID3DCApaper.pdf'
+import UTMCCSpaper from '@/assets/UTMCCS.pdf'
 
 interface Props {
   listTitle: string;
@@ -41,7 +42,7 @@ function formatAuthors(authors: string) {
 					<!-- Publication image -->
 					<div class='w-56 h-40 flex-shrink-0'>
 						<Image
-							src={RCI3DCAteaser}
+							src={item.teaser}
 							alt={item.title}
 							class='w-full h-full object-cover rounded-lg'
 						/>
@@ -58,7 +59,7 @@ function formatAuthors(authors: string) {
 						<!-- Action buttons -->
 						<div class='flex gap-3'>
 							<a 
-								href={RCI3DCApaper}
+								href={item.pdfLink}
 								class='btn btn-sm custom-pdf-btn'
 								target='_blank'
 								rel='noopener noreferrer'
