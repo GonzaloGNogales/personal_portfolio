@@ -62,6 +62,17 @@ export const publications = [
 		videoLink: 'https://www.youtube.com/watch?v=gP8FFeKRqx0&ab_channel=DanCasas',
 		webLink: 'https://mslab.es/projects/Dense3DCrowds/'
 	},
+	{
+		title: 'Unlocking Thickness Modeling for Codimensional Contact Simulation',
+		authors: 'Gonzalo Gomez-Nogales, Zhen Chen, Rosalie Martin, Elena Garces, Danny M. Kaufman',
+		journal: 'arXiv preprint',
+		time: '2025',
+		link: 'https://arxiv.org/abs/2510.10256',
+		abstract: 'We propose a novel contact-aware method to synthesize highly-dense 3D crowds of animated characters. Existing methods animate crowds by, first, computing the 2D global motion approximating subjects as 2D particles and, then, introducing individual character motions without considering their surroundings. This creates the illusion of a 3D crowd, but, with density, characters frequently intersect each other since character-to-character contact is not modeled. We tackle this issue and propose a general method that considers any crowd animation and resolves existing residual collisions. To this end, we take a physics-based approach to model contacts between articulated characters. This enables the real-time synthesis of 3D high-density crowds with dozens of individuals that do not intersect each other, producing an unprecedented level of physical correctness in animations. Under the hood, we model each individual using a parametric human body incorporating a set of 3D proxies to approximate their volume. We then build a large system of articulated rigid bodies, and use an efficient physics-based approach to solve for individual body poses that do not collide with each other while maintaining the overall motion of the crowd. We first validate our approach objectively and quantitatively. We then explore relations between physical correctness and perceived realism based on an extensive user study that evaluates the relevance of solving contacts in dense crowds. Results demonstrate that our approach outperforms existing methods for crowd animation in terms of geometric accuracy and overall realism.',
+		pdfLink: 'assets/UTMCCS.pdf',
+		videoLink: '',
+		webLink: ''
+	},
 	// {
 	// 	title: 'The Radiation of Uranium Compounds',
 	// 	authors: 'Marie Curie',
