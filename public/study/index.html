@@ -67,6 +67,7 @@
         <div class="language-buttons">
           <button type="button" class="lang-btn selected" data-lang="en">🇬🇧 English</button>
           <button type="button" class="lang-btn" data-lang="es">🇪🇸 Español</button>
+          <button type="button" class="lang-btn" data-lang="zh">🇨🇳 中文</button>
         </div>
       </div>
 
@@ -274,6 +275,75 @@
 
           <p>Si tienes dudas durante el estudio, avísanos en cualquier momento!</p>
           <p><strong>Muchas gracias por tu ayuda 😄</strong></p>
+        `
+      },
+      zh: {
+        pageTitle: '互动合理性研究',
+        languageLabel: '语言',
+        startTitle: '欢迎参加本次用户研究',
+        startSubtitle: '在本研究中，你将评估 30 个场景。',
+        folderHelp: '阅读完说明后，点击“开始研究”即可开始。',
+        showInstructionsBtn: '继续',
+        beginBtn: '开始研究',
+        backBtn: '返回',
+        startingStudy: '正在创建参与者会话...',
+        navTitle: '视图控制',
+        navLine1: '🖱️ 左键点击并拖动：<em>旋转</em>',
+        navLine2: '🖱️ 右键点击并拖动：<em>平移</em>',
+        navLine3: '📜 鼠标滚轮：<em>缩放</em>',
+        questionInstruction: '请评估两个人之间整体互动的合理性。不要分别判断每个人。',
+        questionReminder: '请忽略身体之间的碰撞或穿插，判断整体互动。',
+        question: '这种互动是否可能合理地发生在现实世界中的两个人之间？',
+        ratings: {
+          1: '1 - 非常不合理',
+          2: '2 - 不合理',
+          3: '3 - 中立',
+          4: '4 - 合理',
+          5: '5 - 非常合理'
+        },
+        nextBtn: '下一场景',
+        endTitle: '研究完成！',
+        endSubtitle: '感谢你的参与。你的回答已自动保存。',
+        loadSceneError: '场景加载失败：',
+        saveResponseError: '此条回答保存失败，请重试。',
+        finishError: '研究已结束，但最终完成状态未能自动保存。',
+        configError: 'Supabase 尚未配置。请在 index.html 中替换 SUPABASE_URL 和 SUPABASE_ANON_KEY。',
+        instructionsHtml: `
+          <h2>用户研究说明</h2>
+          <p>本研究旨在评估不同 3D 场景中两个人体头像之间互动的合理性。</p>
+          <p>回答时，请关注<strong>两个人之间互动本身的合理性</strong>，而不是分别判断每个人单独姿态是否合理。请问自己：<em>这种互动是否是你能在现实世界中的两个人之间看到或想象到的？</em></p>
+          <p><strong>重要说明：</strong>请不要因为两个人体之间存在接触、碰撞或穿插，就忽略或低估某个场景。你的任务是判断<strong>两人之间所呈现出的整体互动</strong>。请根据你的整体感受和直觉，对完整互动进行评价，并判断它是否可能合理地发生在现实世界中。</p>
+
+          <h3>1. 界面中你会看到什么</h3>
+          <p>在研究过程中，你会看到以下内容：</p>
+          <ul>
+            <li><strong>进度指示器（左上角）</strong><br>显示你当前正在评估的是第几个场景。</li>
+            <li><strong>3D 视图（屏幕中央）</strong><br>这里会显示两个头像在场景中的互动。</li>
+            <li><strong>视图控制说明（左下角）</strong><br>界面中会显示一小段控制说明，方便你旋转相机、在场景周围移动以及调整视角。</li>
+            <li><strong>评估问题（底部区域）</strong><br>你始终会看到以下说明、提醒和问题：<br><em>请评估两个人之间整体互动的合理性。不要分别判断每个人。</em><br><em>请忽略身体之间的碰撞或穿插，判断整体互动。</em><br><em>这种互动是否可能合理地发生在现实世界中的两个人之间？</em></li>
+            <li><strong>评分量表</strong><br>请使用 1 到 5 的量表进行回答：<br>
+                1 — 非常不合理<br>
+                2 — 不合理<br>
+                3 — 中立<br>
+                4 — 合理<br>
+                5 — 非常合理
+            </li>
+            <li><strong>“下一场景”按钮（右下角）</strong><br>只有在你选择了一个答案之后，该按钮才会激活。完成回答后，点击它即可进入下一个场景。</li>
+          </ul>
+
+          <h3>2. 场景数量</h3>
+          <p>本研究一共包含 <strong>30 个场景</strong>。</p>
+          <p>这些场景会逐个显示，你需要分别对每一个场景进行评估。</p>
+          
+          <h3>3. 研究结束</h3>
+          <ul>
+            <li>在你完成研究的过程中，所有回答都会自动保存。</li>
+            <li>当你完成全部场景后，你的参与记录也会自动保存。</li>
+            <li>你不需要手动下载或发送任何结果文件。</li>
+          </ul>
+
+          <p>如果你在研究过程中有任何问题，请随时告诉我们！</p>
+          <p><strong>非常感谢你的帮助 😄</strong></p>
         `
       }
     };
