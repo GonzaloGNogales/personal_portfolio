@@ -57,6 +57,163 @@
     #folder-help {
       margin-top: 0;
     }
+    #rating-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    @media (max-width: 768px) {
+      body {
+        height: auto;
+        min-height: 100dvh;
+        overflow-y: auto;
+      }
+
+      .overlay-screen {
+        height: 100dvh;
+        padding: 12px 0;
+        box-sizing: border-box;
+        overflow-y: auto;
+        justify-content: flex-start;
+      }
+
+      .card {
+        width: calc(100vw - 24px);
+        max-width: none;
+        padding: 24px 18px;
+        box-sizing: border-box;
+      }
+
+      .instructions-card {
+        max-width: none;
+        max-height: none;
+      }
+
+      .language-buttons {
+        gap: 8px;
+      }
+
+      .lang-btn {
+        min-width: 0;
+        flex: 1 1 calc(50% - 8px);
+        padding: 12px 10px;
+        font-size: 14px;
+      }
+
+      .actions-row {
+        flex-direction: column;
+      }
+
+      .primary-btn,
+      .secondary-btn {
+        width: 100%;
+      }
+
+      #study-ui {
+        min-height: 100dvh;
+        height: auto;
+        box-sizing: border-box;
+        padding: 64px 0 calc(92px + env(safe-area-inset-bottom, 0px));
+        overflow-y: auto;
+      }
+
+      #counter {
+        top: 12px;
+        left: 12px;
+        font-size: 16px;
+        padding: 6px 12px;
+        z-index: 25;
+      }
+
+      #canvas-container {
+        width: calc(100vw - 24px);
+        height: 42dvh;
+        min-height: 240px;
+        max-height: 420px;
+        margin-top: 0;
+      }
+
+      #controls {
+        width: calc(100vw - 24px);
+        margin-top: 14px;
+      }
+
+      #question-instruction {
+        font-size: 15px !important;
+        line-height: 1.45;
+      }
+
+      #question-reminder {
+        font-size: 13px !important;
+        line-height: 1.4;
+      }
+
+      #question {
+        font-size: 17px;
+        line-height: 1.4;
+        margin-bottom: 16px;
+      }
+
+      #rating-container {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+
+      .rating-btn {
+        width: 100%;
+        margin: 0;
+        padding: 14px 16px;
+        font-size: 15px;
+      }
+
+      #next-btn {
+        position: fixed;
+        left: 12px;
+        right: 12px;
+        bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+        width: auto;
+        padding: 14px 18px;
+        font-size: 17px;
+        z-index: 30;
+      }
+
+      #nav-help {
+        left: 10px !important;
+        right: 10px;
+        bottom: 10px !important;
+        max-width: none;
+        width: auto;
+        padding: 8px 10px !important;
+        font-size: 12px !important;
+        line-height: 1.45 !important;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .card {
+        padding: 20px 14px;
+      }
+
+      .lang-btn {
+        flex: 1 1 100%;
+      }
+
+      #canvas-container {
+        min-height: 220px;
+        height: 38dvh;
+      }
+
+      #question {
+        font-size: 16px;
+      }
+
+      .rating-btn {
+        font-size: 14px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -153,6 +310,9 @@
         navLine1: '🖱️ Left Click + Drag: <em>Rotate</em>',
         navLine2: '🖱️ Right Click + Drag: <em>Pan</em>',
         navLine3: '📜 Scroll Wheel: <em>Zoom</em>',
+        mobileNavLine1: '👆 One finger drag: <em>Rotate</em>',
+        mobileNavLine2: '✌️ Two fingers drag: <em>Pan</em>',
+        mobileNavLine3: '🤏 Pinch: <em>Zoom</em>',
         questionInstruction: 'Rate the plausibility of the overall interaction between the two humans. Do not judge each person separately.',
         questionReminder: 'Ignore body collisions or penetrations, and judge the overall interaction.',
         question: 'Could this interaction plausibly happen between two people in the real world?',
@@ -196,7 +356,7 @@
           <h3>2. Number of scenes</h3>
           <p>The study consists of <strong>30 scenes</strong> in total.</p>
           <p>The scenes will be shown one by one, and you should evaluate each one individually.</p>
-          
+
           <h3>3. End of the study</h3>
           <ul>
             <li>Your responses are saved automatically while you complete the study.</li>
@@ -222,6 +382,9 @@
         navLine1: '🖱️ Clic izquierdo + arrastrar: <em>Rotar</em>',
         navLine2: '🖱️ Clic derecho + arrastrar: <em>Mover</em>',
         navLine3: '📜 Rueda del ratón: <em>Zoom</em>',
+        mobileNavLine1: '👆 Arrastrar con un dedo: <em>Rotar</em>',
+        mobileNavLine2: '✌️ Arrastrar con dos dedos: <em>Mover</em>',
+        mobileNavLine3: '🤏 Pellizcar: <em>Zoom</em>',
         questionInstruction: 'Valora la plausibilidad de la interacción global entre las dos personas. No juzgues a cada persona por separado.',
         questionReminder: 'Ignora las colisiones o penetraciones entre los cuerpos y juzga la interacción global.',
         question: '¿Podría ocurrir de forma plausible esta interacción entre dos personas en el mundo real?',
@@ -265,7 +428,7 @@
           <h3>2. Número de escenas</h3>
           <p>El estudio consta de <strong>30 escenas</strong> en total.</p>
           <p>Las escenas se mostrarán una por una, y deberás evaluar cada una individualmente.</p>
-          
+
           <h3>3. Finalización del estudio</h3>
           <ul>
             <li>Tus respuestas se guardan automáticamente mientras completas el estudio.</li>
@@ -291,6 +454,9 @@
         navLine1: '🖱️ 左键点击并拖动：<em>旋转</em>',
         navLine2: '🖱️ 右键点击并拖动：<em>平移</em>',
         navLine3: '📜 鼠标滚轮：<em>缩放</em>',
+        mobileNavLine1: '👆 单指拖动：<em>旋转</em>',
+        mobileNavLine2: '✌️ 双指拖动：<em>平移</em>',
+        mobileNavLine3: '🤏 双指捏合：<em>缩放</em>',
         questionInstruction: '请评估两个人之间整体互动的合理性。不要分别判断每个人。',
         questionReminder: '请忽略身体之间的碰撞或穿插，判断整体互动。',
         question: '这种互动是否可能合理地发生在现实世界中的两个人之间？',
@@ -334,7 +500,7 @@
           <h3>2. 场景数量</h3>
           <p>本研究一共包含 <strong>30 个场景</strong>。</p>
           <p>这些场景会逐个显示，你需要分别对每一个场景进行评估。</p>
-          
+
           <h3>3. 研究结束</h3>
           <ul>
             <li>在你完成研究的过程中，所有回答都会自动保存。</li>
@@ -390,6 +556,8 @@
       });
     });
 
+    window.addEventListener('resize', updateNavigationHelpText);
+
     function createSupabaseClient() {
       if (typeof window.supabase === 'undefined') {
         throw new Error('Supabase CDN failed to load.');
@@ -408,6 +576,18 @@
       document.getElementById(id).textContent = text || '';
     }
 
+    function isMobileLikeDevice() {
+      return window.matchMedia('(max-width: 768px), (pointer: coarse)').matches;
+    }
+
+    function updateNavigationHelpText() {
+      const t = translations[currentLanguage];
+      const useMobileHelp = isMobileLikeDevice();
+      document.getElementById('nav-line-1').innerHTML = useMobileHelp ? t.mobileNavLine1 : t.navLine1;
+      document.getElementById('nav-line-2').innerHTML = useMobileHelp ? t.mobileNavLine2 : t.navLine2;
+      document.getElementById('nav-line-3').innerHTML = useMobileHelp ? t.mobileNavLine3 : t.navLine3;
+    }
+
     function setLanguage(lang) {
       currentLanguage = lang;
       const t = translations[currentLanguage];
@@ -421,9 +601,7 @@
       document.getElementById('begin-btn').textContent = t.beginBtn;
       document.getElementById('back-btn').textContent = t.backBtn;
       document.getElementById('nav-title').textContent = t.navTitle;
-      document.getElementById('nav-line-1').innerHTML = t.navLine1;
-      document.getElementById('nav-line-2').innerHTML = t.navLine2;
-      document.getElementById('nav-line-3').innerHTML = t.navLine3;
+      updateNavigationHelpText();
       document.getElementById('question-instruction').textContent = t.questionInstruction;
       document.getElementById('question-reminder').textContent = t.questionReminder;
       document.getElementById('question').textContent = t.question;
@@ -537,9 +715,14 @@
 
       renderer = new THREE.WebGLRenderer({ antialias: true });
       renderer.setSize(container.clientWidth, container.clientHeight);
+      renderer.domElement.style.touchAction = 'none';
       container.appendChild(renderer.domElement);
 
       controls = new OrbitControls(camera, renderer.domElement);
+      if (isMobileLikeDevice()) {
+        controls.touches.ONE = THREE.TOUCH.ROTATE;
+        controls.touches.TWO = THREE.TOUCH.DOLLY_PAN;
+      }
       scene.add(new THREE.HemisphereLight(0xffffff, 0x444444, 0.8));
 
       const keyLight = new THREE.DirectionalLight(0xffffff, 0.7);
@@ -559,6 +742,7 @@
       });
 
       renderer.setAnimationLoop(() => renderer.render(scene, camera));
+      updateNavigationHelpText();
       loadCurrentScene();
     }
 
