@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interaction Plausibility Study</title>
+  <link rel="stylesheet" href="styles.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+      }
+    }
+  </script>
+
+  <style>
+    .language-section { margin-bottom: 22px; }
+    .language-label {
+      display: block; font-size: 16px; font-weight: bold; color: #333; margin-bottom: 12px;
+    }
+    .language-buttons {
+      display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;
+    }
+    .lang-btn, .secondary-btn, .primary-btn {
+      border: none; border-radius: 8px; padding: 12px 18px; font-size: 15px; cursor: pointer; transition: 0.2s;
+    }
+    .lang-btn {
+      background: #f3f4f7; border: 2px solid #d8dbe4; color: #333; min-width: 145px; font-weight: 600;
+    }
+    .lang-btn.selected { background: #007bff; border-color: #007bff; color: white; }
+    .folder-help { margin: 16px 0 6px; color: #444; line-height: 1.5; }
+    .actions-row { margin-top: 24px; display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+    .primary-btn { background-color: #007bff; color: white; }
+    .primary-btn:hover, .secondary-btn:hover { filter: brightness(0.95); }
+    .secondary-btn { background-color: #e9ecef; color: #222; }
+    .instructions-card { max-width: 820px; max-height: 86vh; overflow-y: auto; text-align: left; }
+    .instructions-card h2 { margin-top: 0; text-align: center; }
+    .instructions-card h3 { margin-bottom: 8px; margin-top: 20px; color: #222; }
+    .instructions-card p, .instructions-card li { line-height: 1.6; color: #333; }
+    .instructions-card ul, .instructions-card ol { padding-left: 22px; }
+    .status-note {
+      margin-top: 14px; min-height: 20px; color: #444; font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div id="start-screen" class="overlay-screen">
+    <div class="card">
+      <div class="language-section">
+        <span class="language-label" id="language-label">Language / Idioma</span>
+        <div class="language-buttons">
+          <button type="button" class="lang-btn selected" data-lang="en">🇬🇧 English</button>
+          <button type="button" class="lang-btn" data-lang="es">🇪🇸 Español</button>
+        </div>
+      </div>
+
+      <h2 id="start-title">Welcome to the User Study</h2>
+      <p id="start-subtitle">You will review 30 scenes hosted directly on this website.</p>
+      <p class="folder-help" id="folder-help">After reading the instructions, click Start Study to begin.</p>
+      <div class="actions-row">
+        <button id="show-instructions-btn" class="primary-btn">Continue</button>
+      </div>
+      <div id="start-status" class="status-note"></div>
+    </div>
+  </div>
+
+  <div id="instructions-screen" class="overlay-screen" style="display: none;">
+    <div class="card instructions-card">
+      <div id="instructions-content"></div>
+      <div class="actions-row">
+        <button id="back-btn" class="secondary-btn">Back</button>
+        <button id="begin-btn" class="primary-btn">Start Study</button>
+      </div>
+      <div id="begin-status" class="status-note"></div>
+    </div>
+  </div>
+
+  <div id="study-ui" style="display: none;">
+    <div id="counter">1/30</div>
+
+    <div id="canvas-container" style="position: relative;">
+      <div id="nav-help" style="position: absolute; bottom: 15px; left: 15px; background: rgba(0, 0, 0, 0.5); color: #fff; padding: 10px 15px; border-radius: 6px; font-size: 13px; pointer-events: none; line-height: 1.6; text-align: left;">
+        <strong id="nav-title">Navigation Controls</strong><br>
+        <span id="nav-line-1">🖱️ Left Click + Drag: <em>Rotate</em></span><br>
+        <span id="nav-line-2">🖱️ Right Click + Drag: <em>Pan</em></span><br>
+        <span id="nav-line-3">📜 Scroll Wheel: <em>Zoom</em></span>
+      </div>
+    </div>
+
+    <div id="controls">
+      <div id="question-instruction" style="font-size: 16px; margin-bottom: 8px; color: #444; font-weight: 600;">Rate the plausibility of the overall interaction between the two humans. Do not judge each person separately.</div>
+      <div id="question-reminder" style="font-size: 14px; margin-bottom: 10px; color: #666; font-style: italic;">Ignore body collisions or penetrations, and judge the overall interaction.</div>
+      <div id="question">Could this interaction plausibly happen between two people in the real world?</div>
+      <div id="rating-container">
+        <button class="rating-btn" data-value="1">1 - Very implausible</button>
+        <button class="rating-btn" data-value="2">2 - Implausible</button>
+        <button class="rating-btn" data-value="3">3 - Neutral / Unsure</button>
+        <button class="rating-btn" data-value="4">4 - Plausible</button>
+        <button class="rating-btn" data-value="5">5 - Very plausible</button>
+      </div>
+      <div id="study-status" class="status-note"></div>
+    </div>
+
+    <button id="next-btn">Next Scene</button>
+  </div>
+
+  <div id="end-screen" class="overlay-screen" style="display: none;">
+    <div class="card">
+      <h2 id="end-title">Study Complete!</h2>
+      <p id="end-subtitle">Thank you for your participation. Your responses have been saved automatically.</p>
+    </div>
+  </div>
+
+  <script type="module">
+    import * as THREE from 'three';
+    import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+    const SUPABASE_URL = 'https://ysxrjygghpntwvhiwesm.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_8oZBkSVlWPyrQIKOfcAXLg_15SRjWra';
+    const ASSET_BASE_URL = '/study/assets';
+    const POSES_PER_CONDITION = 10;
+
+    const translations = {
+      en: {
+        pageTitle: 'Interaction Plausibility Study',
+        languageLabel: 'Language',
+        startTitle: 'Welcome to the User Study',
+        startSubtitle: 'You will review 30 scenes hosted directly on this website.',
+        folderHelp: 'After reading the instructions, click Start Study to begin.',
+        showInstructionsBtn: 'Continue',
+        beginBtn: 'Start Study',
+        backBtn: 'Back',
+        startingStudy: 'Creating participant session...',
+        navTitle: 'Navigation Controls',
+        navLine1: '🖱️ Left Click + Drag: <em>Rotate</em>',
+        navLine2: '🖱️ Right Click + Drag: <em>Pan</em>',
+        navLine3: '📜 Scroll Wheel: <em>Zoom</em>',
+        questionInstruction: 'Rate the plausibility of the overall interaction between the two humans. Do not judge each person separately.',
+        questionReminder: 'Ignore body collisions or penetrations, and judge the overall interaction.',
+        question: 'Could this interaction plausibly happen between two people in the real world?',
+        ratings: {
+          1: '1 - Very implausible',
+          2: '2 - Implausible',
+          3: '3 - Neutral / Unsure',
+          4: '4 - Plausible',
+          5: '5 - Very plausible'
+        },
+        nextBtn: 'Next Scene',
+        endTitle: 'Study Complete!',
+        endSubtitle: 'Thank you for your participation. Your responses have been saved automatically.',
+        loadSceneError: 'Failed to load scene:',
+        saveResponseError: 'Failed to save this response. Please try again.',
+        finishError: 'The study ended, but the completion status could not be saved automatically.',
+        configError: 'Supabase is not configured yet. Replace SUPABASE_URL and SUPABASE_ANON_KEY in index.html.',
+        instructionsHtml: `
+          <h2>Instructions for Completing the User Study</h2>
+          <p>This study aims to evaluate the plausibility of interactions between two human avatars shown in different 3D scenes.</p>
+          <p>When answering, please focus on the plausibility of the <strong>interaction between the two humans</strong>, not on the individual plausibility of each human separately.</p>
+          <p><strong>Important disclaimer:</strong> please do not overlook or underrate a scene because of body contacts or penetrations between the two human bodies. Your task is to judge the <strong>overall interaction emerging between both people</strong>.</p>
+
+          <h3>1. What you will see in the interface</h3>
+          <p>During the study you will see the following elements:</p>
+          <ul>
+            <li><strong>Progress indicator (top left)</strong><br>Shows the number of the scene you are currently evaluating.</li>
+            <li><strong>3D viewer (center of the screen)</strong><br>Here you will see the two avatars interacting in the scene.</li>
+            <li><strong>Viewer controls (bottom left)</strong><br>A small control guide is included so that you can rotate the camera, move around the scene, and adjust the view.</li>
+            <li><strong>Evaluation question (bottom area)</strong><br>You will always see this instruction, reminder, and question:<br><em>Rate the plausibility of the overall interaction between the two humans. Do not judge each person separately.</em><br><em>Ignore body collisions or penetrations, and judge the overall interaction.</em><br><em>Could this interaction plausibly happen between two people in the real world?</em></li>
+            <li><strong>Rating scale</strong><br>You must answer using a scale from 1 to 5:<br>
+                1 — Very implausible<br>
+                2 — Implausible<br>
+                3 — Neutral / Unsure<br>
+                4 — Plausible<br>
+                5 — Very plausible
+            </li>
+            <li><strong>“Next Scene” button (bottom right)</strong><br>This button will only become active after you select an answer. Once you respond, click it to move to the next scene.</li>
+          </ul>
+
+          <h3>2. Number of scenes</h3>
+          <p>The study consists of <strong>30 scenes</strong> in total.</p>
+          <p>The system shows one condition block at a time, and the order of the condition blocks is assigned automatically to keep the study balanced across participants. Inside each block, the 10 scenes are shown in random order.</p>
+
+          <h3>3. End of the study</h3>
+          <ul>
+            <li>Your responses are saved automatically while you complete the study.</li>
+            <li>When you finish all the scenes, your participation will be recorded automatically.</li>
+            <li>You do not need to download or send any results file manually.</li>
+          </ul>
+
+          <p>If you have any questions during the study, please let us know before starting.</p>
+          <p><strong>Thank you very much for your help 😄</strong></p>
+        `
+      },
+      es: {
+        pageTitle: 'Estudio de Plausibilidad de Interacciones',
+        languageLabel: 'Idioma',
+        startTitle: 'Bienvenido al User Study',
+        startSubtitle: 'Revisarás 30 escenas alojadas directamente en este sitio web.',
+        folderHelp: 'Después de leer las instrucciones, pulsa Comenzar estudio para empezar.',
+        showInstructionsBtn: 'Continuar',
+        beginBtn: 'Comenzar estudio',
+        backBtn: 'Volver',
+        startingStudy: 'Creando sesión del participante...',
+        navTitle: 'Controles de navegación',
+        navLine1: '🖱️ Clic izquierdo + arrastrar: <em>Rotar</em>',
+        navLine2: '🖱️ Clic derecho + arrastrar: <em>Mover</em>',
+        navLine3: '📜 Rueda del ratón: <em>Zoom</em>',
+        questionInstruction: 'Valora la plausibilidad de la interacción global entre las dos personas. No juzgues a cada persona por separado.',
+        questionReminder: 'Ignora las colisiones o penetraciones entre los cuerpos y juzga la interacción global.',
+        question: '¿Podría ocurrir de forma plausible esta interacción entre dos personas en el mundo real?',
+        ratings: {
+          1: '1 - Muy poco plausible',
+          2: '2 - Poco plausible',
+          3: '3 - Neutral / No estoy seguro',
+          4: '4 - Plausible',
+          5: '5 - Muy plausible'
+        },
+        nextBtn: 'Siguiente escena',
+        endTitle: '¡Estudio completado!',
+        endSubtitle: 'Gracias por tu participación. Tus respuestas se han guardado automáticamente.',
+        loadSceneError: 'No se pudo cargar la escena:',
+        saveResponseError: 'No se pudo guardar esta respuesta. Por favor, inténtalo de nuevo.',
+        finishError: 'El estudio terminó, pero no se pudo guardar automáticamente el estado final.',
+        configError: 'Supabase todavía no está configurado. Sustituye SUPABASE_URL y SUPABASE_ANON_KEY en index.html.',
+        instructionsHtml: `
+          <h2>Instrucciones para realizar el User Study</h2>
+          <p>Este estudio tiene como objetivo evaluar la plausibilidad de interacciones entre dos avatares humanos mostrados en diferentes escenas 3D.</p>
+          <p>Al responder, fíjate en la plausibilidad de la <strong>interacción entre las dos personas</strong>, no en la plausibilidad individual de cada una por separado.</p>
+          <p><strong>Aviso importante:</strong> por favor, no descartes ni infravalores una escena por contactos o penetraciones entre los cuerpos humanos. Tu tarea es juzgar la <strong>interacción global que emerge entre ambas personas</strong>.</p>
+
+          <h3>1. Qué verás en la interfaz</h3>
+          <p>Durante el estudio verás los siguientes elementos:</p>
+          <ul>
+            <li><strong>Indicador de progreso (arriba a la izquierda)</strong><br>Muestra el número de escena que estás evaluando.</li>
+            <li><strong>Visor 3D (centro de la pantalla)</strong><br>Aquí se muestran los dos avatares interactuando en la escena.</li>
+            <li><strong>Controles del visor (abajo a la izquierda)</strong><br>Se incluye una pequeña guía de controles para que puedas rotar la cámara, moverte alrededor de la escena y ajustar la vista.</li>
+            <li><strong>Pregunta de evaluación (parte inferior)</strong><br>Siempre verás esta instrucción, este recordatorio y esta pregunta:<br><em>Valora la plausibilidad de la interacción global entre las dos personas. No juzgues a cada persona por separado.</em><br><em>Ignora las colisiones o penetraciones entre los cuerpos y juzga la interacción global.</em><br><em>¿Podría ocurrir de forma plausible esta interacción entre dos personas en el mundo real?</em></li>
+            <li><strong>Escala de valoración</strong><br>Deberás responder usando una escala de 1 a 5:<br>
+                1 — Muy poco plausible<br>
+                2 — Poco plausible<br>
+                3 — Neutral / No estoy seguro<br>
+                4 — Plausible<br>
+                5 — Muy plausible
+            </li>
+            <li><strong>Botón “Siguiente escena” (abajo a la derecha)</strong><br>Este botón solo se activará después de seleccionar una respuesta. Una vez respondido, puedes pulsarlo para pasar a la siguiente escena.</li>
+          </ul>
+
+          <h3>2. Número de escenas</h3>
+          <p>El estudio consta de <strong>30 escenas</strong> en total.</p>
+          <p>El sistema muestra un bloque de condición cada vez, y el orden de los bloques se asigna automáticamente para mantener el estudio equilibrado entre participantes. Dentro de cada bloque, las 10 escenas se muestran en orden aleatorio.</p>
+
+          <h3>3. Finalización del estudio</h3>
+          <ul>
+            <li>Tus respuestas se guardan automáticamente mientras completas el estudio.</li>
+            <li>Cuando termines todas las escenas, tu participación quedará registrada automáticamente.</li>
+            <li>No necesitas descargar ni enviar manualmente ningún archivo de resultados.</li>
+          </ul>
+
+          <p>Si tienes dudas durante el estudio, avísanos antes de comenzar.</p>
+          <p><strong>Muchas gracias por tu ayuda 😄</strong></p>
+        `
+      }
+    };
+
+    const startScreen = document.getElementById('start-screen');
+    const instructionsScreen = document.getElementById('instructions-screen');
+    const studyUI = document.getElementById('study-ui');
+    const endScreen = document.getElementById('end-screen');
+
+    const supabase = createSupabaseClient();
+    let currentLanguage = 'en';
+    let orderedScenes = [];
+    let currentSceneIndex = 0;
+    let selectedScore = null;
+    let participantSession = null;
+    let scene, camera, renderer, controls, objLoader;
+    let currentModels = [];
+
+    document.getElementById('show-instructions-btn').addEventListener('click', () => {
+      startScreen.style.display = 'none';
+      instructionsScreen.style.display = 'flex';
+      setStatus('start-status', '');
+    });
+
+    document.getElementById('back-btn').addEventListener('click', () => {
+      instructionsScreen.style.display = 'none';
+      startScreen.style.display = 'flex';
+      setStatus('begin-status', '');
+    });
+
+    document.getElementById('begin-btn').addEventListener('click', startStudy);
+    document.getElementById('next-btn').addEventListener('click', onNextClick);
+
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => setLanguage(btn.dataset.lang));
+    });
+
+    document.querySelectorAll('.rating-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        document.querySelectorAll('.rating-btn').forEach(b => b.classList.remove('selected'));
+        e.target.classList.add('selected');
+        selectedScore = e.target.getAttribute('data-value');
+        document.getElementById('next-btn').classList.add('enabled');
+      });
+    });
+
+    function createSupabaseClient() {
+      if (typeof window.supabase === 'undefined') {
+        throw new Error('Supabase CDN failed to load.');
+      }
+      const { createClient } = window.supabase;
+      return createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+        auth: { persistSession: false, autoRefreshToken: false }
+      });
+    }
+
+    function isSupabaseConfigured() {
+      return !SUPABASE_URL.startsWith('REPLACE_') && !SUPABASE_ANON_KEY.startsWith('REPLACE_');
+    }
+
+    function setStatus(id, text) {
+      document.getElementById(id).textContent = text || '';
+    }
+
+    function setLanguage(lang) {
+      currentLanguage = lang;
+      const t = translations[currentLanguage];
+      document.documentElement.lang = currentLanguage;
+      document.title = t.pageTitle;
+      document.getElementById('language-label').textContent = t.languageLabel;
+      document.getElementById('start-title').textContent = t.startTitle;
+      document.getElementById('start-subtitle').innerHTML = t.startSubtitle;
+      document.getElementById('folder-help').textContent = t.folderHelp;
+      document.getElementById('show-instructions-btn').textContent = t.showInstructionsBtn;
+      document.getElementById('begin-btn').textContent = t.beginBtn;
+      document.getElementById('back-btn').textContent = t.backBtn;
+      document.getElementById('nav-title').textContent = t.navTitle;
+      document.getElementById('nav-line-1').innerHTML = t.navLine1;
+      document.getElementById('nav-line-2').innerHTML = t.navLine2;
+      document.getElementById('nav-line-3').innerHTML = t.navLine3;
+      document.getElementById('question-instruction').textContent = t.questionInstruction;
+      document.getElementById('question-reminder').textContent = t.questionReminder;
+      document.getElementById('question').textContent = t.question;
+      document.getElementById('next-btn').textContent = t.nextBtn;
+      document.getElementById('end-title').textContent = t.endTitle;
+      document.getElementById('end-subtitle').textContent = t.endSubtitle;
+      document.getElementById('instructions-content').innerHTML = t.instructionsHtml;
+
+      document.querySelectorAll('.rating-btn').forEach(btn => {
+        btn.textContent = t.ratings[btn.dataset.value];
+      });
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('selected', btn.dataset.lang === currentLanguage);
+      });
+    }
+
+    function shuffleInPlace(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+    }
+
+    function normalizeConditionOrder(rawOrder) {
+      if (Array.isArray(rawOrder)) {
+        return rawOrder;
+      }
+      if (typeof rawOrder === 'string') {
+        try {
+          const parsed = JSON.parse(rawOrder);
+          if (Array.isArray(parsed)) return parsed;
+        } catch (error) {
+          console.warn('Failed to parse condition_order:', error);
+        }
+      }
+      throw new Error('Invalid condition order received from database.');
+    }
+
+    function buildHostedScenes(conditionOrder) {
+      const result = [];
+      conditionOrder.forEach((condition, blockIndex) => {
+        const block = [];
+        for (let poseNumber = 1; poseNumber <= POSES_PER_CONDITION; poseNumber += 1) {
+          const poseFolder = `pose${poseNumber}`;
+          const folderPath = `${ASSET_BASE_URL}/${condition}/${poseFolder}`;
+          block.push({
+            folderPath,
+            condition,
+            poseFolder,
+            conditionPosition: blockIndex + 1,
+            avatar1Url: `${folderPath}/avatar1.obj`,
+            avatar2Url: `${folderPath}/avatar2.obj`
+          });
+        }
+        shuffleInPlace(block);
+        result.push(...block);
+      });
+      return result;
+    }
+
+    async function startStudy() {
+      if (!isSupabaseConfigured()) {
+        alert(translations[currentLanguage].configError);
+        return;
+      }
+
+      const beginBtn = document.getElementById('begin-btn');
+      beginBtn.disabled = true;
+      setStatus('begin-status', translations[currentLanguage].startingStudy);
+
+      try {
+        const { data, error } = await supabase.rpc('create_participant_session', {
+          p_language: currentLanguage,
+          p_user_agent: navigator.userAgent
+        });
+        if (error) throw error;
+
+        participantSession = Array.isArray(data) ? data[0] : data;
+        if (!participantSession || !participantSession.session_token) {
+          throw new Error('Participant session could not be created.');
+        }
+
+        const conditionOrder = normalizeConditionOrder(participantSession.condition_order);
+        orderedScenes = buildHostedScenes(conditionOrder);
+        currentSceneIndex = 0;
+        selectedScore = null;
+
+        instructionsScreen.style.display = 'none';
+        studyUI.style.display = 'flex';
+        endScreen.style.display = 'none';
+        setStatus('begin-status', '');
+
+        if (!renderer) {
+          initThreeJS();
+        } else {
+          await loadCurrentScene();
+        }
+      } catch (error) {
+        console.error(error);
+        setStatus('begin-status', error.message || String(error));
+      } finally {
+        beginBtn.disabled = false;
+      }
+    }
+
+    function initThreeJS() {
+      const container = document.getElementById('canvas-container');
+      scene = new THREE.Scene();
+      scene.background = new THREE.Color(0xe5e5e5);
+      camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 100);
+
+      renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setSize(container.clientWidth, container.clientHeight);
+      container.appendChild(renderer.domElement);
+
+      controls = new OrbitControls(camera, renderer.domElement);
+      scene.add(new THREE.HemisphereLight(0xffffff, 0x444444, 0.8));
+
+      const keyLight = new THREE.DirectionalLight(0xffffff, 0.7);
+      keyLight.position.set(5, 10, 7);
+      scene.add(keyLight);
+
+      const fillLight = new THREE.DirectionalLight(0xffffff, 0.3);
+      fillLight.position.set(-5, 5, -7);
+      scene.add(fillLight);
+
+      objLoader = new OBJLoader();
+
+      window.addEventListener('resize', () => {
+        camera.aspect = container.clientWidth / container.clientHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(container.clientWidth, container.clientHeight);
+      });
+
+      renderer.setAnimationLoop(() => renderer.render(scene, camera));
+      loadCurrentScene();
+    }
+
+    function clearCurrentModels() {
+      currentModels.forEach(model => scene.remove(model));
+      currentModels = [];
+    }
+
+    function loadObjFromUrl(url, materialConfig) {
+      return new Promise((resolve, reject) => {
+        objLoader.load(
+          url,
+          object => {
+            object.traverse(child => {
+              if (child.isMesh) {
+                child.geometry.computeVertexNormals();
+                child.material = new THREE.MeshStandardMaterial(materialConfig);
+              }
+            });
+            resolve(object);
+          },
+          undefined,
+          reject
+        );
+      });
+    }
+
+    async function loadCurrentScene() {
+      document.getElementById('counter').innerText = `${currentSceneIndex + 1}/${orderedScenes.length}`;
+      document.querySelectorAll('.rating-btn').forEach(b => b.classList.remove('selected'));
+      document.getElementById('next-btn').classList.remove('enabled');
+      selectedScore = null;
+      setStatus('study-status', '');
+      clearCurrentModels();
+
+      const currentScene = orderedScenes[currentSceneIndex];
+      if (!currentScene) return;
+
+      try {
+        const [avatar1Object, avatar2Object] = await Promise.all([
+          loadObjFromUrl(currentScene.avatar1Url, { color: 0xba8acf, roughness: 0.7, metalness: 0.05 }),
+          loadObjFromUrl(currentScene.avatar2Url, { color: 0x81d4c6, roughness: 0.7, metalness: 0.05 })
+        ]);
+
+        scene.add(avatar1Object, avatar2Object);
+        currentModels.push(avatar1Object, avatar2Object);
+
+        const box = new THREE.Box3();
+        currentModels.forEach(model => box.expandByObject(model));
+        const center = box.getCenter(new THREE.Vector3());
+        const size = box.getSize(new THREE.Vector3());
+        controls.target.copy(center);
+
+        const maxDim = Math.max(size.x, size.y, size.z);
+        const fov = camera.fov * (Math.PI / 180);
+        let cameraZ = Math.abs(maxDim / 2 / Math.tan(fov / 2));
+        cameraZ *= 1.3;
+        camera.position.set(center.x, center.y + size.y * 0.2, center.z + cameraZ);
+        camera.updateProjectionMatrix();
+        controls.update();
+      } catch (error) {
+        console.error(translations[currentLanguage].loadSceneError, currentScene.folderPath, error);
+        setStatus('study-status', `${translations[currentLanguage].loadSceneError} ${currentScene.folderPath}`);
+      }
+    }
+
+    async function onNextClick() {
+      if (!selectedScore || !participantSession) return;
+
+      const nextBtn = document.getElementById('next-btn');
+      const currentScene = orderedScenes[currentSceneIndex];
+      nextBtn.disabled = true;
+      setStatus('study-status', '');
+
+      try {
+        const { error } = await supabase.rpc('save_response', {
+          p_session_token: participantSession.session_token,
+          p_scene_index: currentSceneIndex + 1,
+          p_condition_position: currentScene.conditionPosition,
+          p_scene_path: currentScene.folderPath,
+          p_condition: currentScene.condition,
+          p_pose: currentScene.poseFolder,
+          p_score: Number(selectedScore)
+        });
+        if (error) throw error;
+
+        currentSceneIndex += 1;
+        if (currentSceneIndex < orderedScenes.length) {
+          await loadCurrentScene();
+        } else {
+          studyUI.style.display = 'none';
+          endScreen.style.display = 'flex';
+
+          const { error: finishError } = await supabase.rpc('finish_participant_session', {
+            p_session_token: participantSession.session_token,
+            p_total_responses: orderedScenes.length
+          });
+          if (finishError) throw finishError;
+        }
+      } catch (error) {
+        console.error(error);
+        setStatus('study-status', error.message || translations[currentLanguage].saveResponseError);
+      } finally {
+        nextBtn.disabled = false;
+      }
+    }
+
+    setLanguage('en');
+  </script>
+</body>
+</html>
