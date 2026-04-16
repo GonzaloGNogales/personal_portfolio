@@ -45,6 +45,18 @@
     .status-note {
       margin-top: 14px; min-height: 20px; color: #444; font-size: 14px;
     }
+
+    #start-screen .card {
+      width: min(560px, calc(100vw - 40px));
+      min-height: 320px;
+      box-sizing: border-box;
+    }
+    #start-subtitle {
+      min-height: 48px;
+    }
+    #folder-help {
+      min-height: 48px;
+    }
   </style>
 </head>
 <body>
@@ -59,7 +71,7 @@
       </div>
 
       <h2 id="start-title">Welcome to the User Study</h2>
-      <p id="start-subtitle">You will review 30 scenes hosted directly on this website.</p>
+      <p id="start-subtitle">You will review 30 scenes in this study.</p>
       <p class="folder-help" id="folder-help">After reading the instructions, click Start Study to begin.</p>
       <div class="actions-row">
         <button id="show-instructions-btn" class="primary-btn">Continue</button>
@@ -98,7 +110,7 @@
       <div id="rating-container">
         <button class="rating-btn" data-value="1">1 - Very implausible</button>
         <button class="rating-btn" data-value="2">2 - Implausible</button>
-        <button class="rating-btn" data-value="3">3 - Neutral / Unsure</button>
+        <button class="rating-btn" data-value="3">3 - Neutral</button>
         <button class="rating-btn" data-value="4">4 - Plausible</button>
         <button class="rating-btn" data-value="5">5 - Very plausible</button>
       </div>
@@ -130,7 +142,7 @@
         pageTitle: 'Interaction Plausibility Study',
         languageLabel: 'Language',
         startTitle: 'Welcome to the User Study',
-        startSubtitle: 'You will review 30 scenes hosted directly on this website.',
+        startSubtitle: 'You will review 30 scenes in this study.',
         folderHelp: 'After reading the instructions, click Start Study to begin.',
         showInstructionsBtn: 'Continue',
         beginBtn: 'Start Study',
@@ -146,7 +158,7 @@
         ratings: {
           1: '1 - Very implausible',
           2: '2 - Implausible',
-          3: '3 - Neutral / Unsure',
+          3: '3 - Neutral',
           4: '4 - Plausible',
           5: '5 - Very plausible'
         },
@@ -173,7 +185,7 @@
             <li><strong>Rating scale</strong><br>You must answer using a scale from 1 to 5:<br>
                 1 — Very implausible<br>
                 2 — Implausible<br>
-                3 — Neutral / Unsure<br>
+                3 — Neutral<br>
                 4 — Plausible<br>
                 5 — Very plausible
             </li>
@@ -182,8 +194,7 @@
 
           <h3>2. Number of scenes</h3>
           <p>The study consists of <strong>30 scenes</strong> in total.</p>
-          <p>The system shows one condition block at a time, and the order of the condition blocks is assigned automatically to keep the study balanced across participants. Inside each block, the 10 scenes are shown in random order.</p>
-
+          
           <h3>3. End of the study</h3>
           <ul>
             <li>Your responses are saved automatically while you complete the study.</li>
@@ -199,7 +210,7 @@
         pageTitle: 'Estudio de Plausibilidad de Interacciones',
         languageLabel: 'Idioma',
         startTitle: 'Bienvenido al User Study',
-        startSubtitle: 'Revisarás 30 escenas alojadas directamente en este sitio web.',
+        startSubtitle: 'Revisarás 30 escenas en este estudio.',
         folderHelp: 'Después de leer las instrucciones, pulsa Comenzar estudio para empezar.',
         showInstructionsBtn: 'Continuar',
         beginBtn: 'Comenzar estudio',
@@ -215,7 +226,7 @@
         ratings: {
           1: '1 - Muy poco plausible',
           2: '2 - Poco plausible',
-          3: '3 - Neutral / No estoy seguro',
+          3: '3 - Neutral',
           4: '4 - Plausible',
           5: '5 - Muy plausible'
         },
@@ -242,7 +253,7 @@
             <li><strong>Escala de valoración</strong><br>Deberás responder usando una escala de 1 a 5:<br>
                 1 — Muy poco plausible<br>
                 2 — Poco plausible<br>
-                3 — Neutral / No estoy seguro<br>
+                3 — Neutral<br>
                 4 — Plausible<br>
                 5 — Muy plausible
             </li>
@@ -251,8 +262,7 @@
 
           <h3>2. Número de escenas</h3>
           <p>El estudio consta de <strong>30 escenas</strong> en total.</p>
-          <p>El sistema muestra un bloque de condición cada vez, y el orden de los bloques se asigna automáticamente para mantener el estudio equilibrado entre participantes. Dentro de cada bloque, las 10 escenas se muestran en orden aleatorio.</p>
-
+          
           <h3>3. Finalización del estudio</h3>
           <ul>
             <li>Tus respuestas se guardan automáticamente mientras completas el estudio.</li>
