@@ -47,15 +47,15 @@
     }
 
     #start-screen .card {
-      width: min(560px, calc(100vw - 40px));
-      min-height: 320px;
+      max-width: 500px;
+      width: calc(100vw - 40px);
       box-sizing: border-box;
     }
     #start-subtitle {
-      min-height: 48px;
+      margin-bottom: 10px;
     }
     #folder-help {
-      min-height: 48px;
+      margin-top: 0;
     }
   </style>
 </head>
@@ -172,8 +172,8 @@
         instructionsHtml: `
           <h2>Instructions for Completing the User Study</h2>
           <p>This study aims to evaluate the plausibility of interactions between two human avatars shown in different 3D scenes.</p>
-          <p>When answering, please focus on the plausibility of the <strong>interaction between the two humans</strong>, not on the individual plausibility of each human separately.</p>
-          <p><strong>Important disclaimer:</strong> please do not overlook or underrate a scene because of body contacts or penetrations between the two human bodies. Your task is to judge the <strong>overall interaction emerging between both people</strong>.</p>
+          <p>When answering, please focus on the plausibility of the <strong>interaction between the two humans</strong>, not on the individual plausibility of each human separately. Ask yourself: <em>Is this an interaction that you could see or imagine between a pair of people in the real world?</em></p>
+          <p><strong>Important disclaimer:</strong> please do not overlook or underrate a scene because of body contacts or penetrations between the two human bodies. Your task is to judge the <strong>overall interaction emerging between both people</strong>. Rate the full interaction based on your general perception and feeling, and decide whether it could plausibly happen in the real world.</p>
 
           <h3>1. What you will see in the interface</h3>
           <p>During the study you will see the following elements:</p>
@@ -194,6 +194,7 @@
 
           <h3>2. Number of scenes</h3>
           <p>The study consists of <strong>30 scenes</strong> in total.</p>
+          <p>The scenes will be shown one by one, and you should evaluate each one individually.</p>
           
           <h3>3. End of the study</h3>
           <ul>
@@ -202,7 +203,7 @@
             <li>You do not need to download or send any results file manually.</li>
           </ul>
 
-          <p>If you have any questions during the study, please let us know before starting.</p>
+          <p>If you have any questions during the study, please let us know!</p>
           <p><strong>Thank you very much for your help 😄</strong></p>
         `
       },
@@ -211,9 +212,9 @@
         languageLabel: 'Idioma',
         startTitle: 'Bienvenido al User Study',
         startSubtitle: 'Revisarás 30 escenas en este estudio.',
-        folderHelp: 'Después de leer las instrucciones, pulsa Comenzar estudio para empezar.',
+        folderHelp: 'Después de leer las instrucciones, pulsa Comenzar Estudio para empezar.',
         showInstructionsBtn: 'Continuar',
-        beginBtn: 'Comenzar estudio',
+        beginBtn: 'Comenzar Estudio',
         backBtn: 'Volver',
         startingStudy: 'Creando sesión del participante...',
         navTitle: 'Controles de navegación',
@@ -230,7 +231,7 @@
           4: '4 - Plausible',
           5: '5 - Muy plausible'
         },
-        nextBtn: 'Siguiente escena',
+        nextBtn: 'Siguiente Escena',
         endTitle: '¡Estudio completado!',
         endSubtitle: 'Gracias por tu participación. Tus respuestas se han guardado automáticamente.',
         loadSceneError: 'No se pudo cargar la escena:',
@@ -240,8 +241,8 @@
         instructionsHtml: `
           <h2>Instrucciones para realizar el User Study</h2>
           <p>Este estudio tiene como objetivo evaluar la plausibilidad de interacciones entre dos avatares humanos mostrados en diferentes escenas 3D.</p>
-          <p>Al responder, fíjate en la plausibilidad de la <strong>interacción entre las dos personas</strong>, no en la plausibilidad individual de cada una por separado.</p>
-          <p><strong>Aviso importante:</strong> por favor, no descartes ni infravalores una escena por contactos o penetraciones entre los cuerpos humanos. Tu tarea es juzgar la <strong>interacción global que emerge entre ambas personas</strong>.</p>
+          <p>Al responder, fíjate en la plausibilidad de la <strong>interacción entre las dos personas</strong>, no en la plausibilidad individual de cada una por separado. Pregúntate: <em>¿Es una interacción que podrías ver o imaginar entre un par de personas en el mundo real?</em></p>
+          <p><strong>Aviso importante:</strong> por favor, no descartes ni infravalores una escena por contactos o penetraciones entre los cuerpos humanos. Tu tarea es juzgar la <strong>interacción global conjunta que emerge entre ambas personas</strong>. Valora la interacción completa según tu percepción y sensación general, y juzga si podría ocurrir de forma plausible en el mundo real.</p>
 
           <h3>1. Qué verás en la interfaz</h3>
           <p>Durante el estudio verás los siguientes elementos:</p>
@@ -257,11 +258,12 @@
                 4 — Plausible<br>
                 5 — Muy plausible
             </li>
-            <li><strong>Botón “Siguiente escena” (abajo a la derecha)</strong><br>Este botón solo se activará después de seleccionar una respuesta. Una vez respondido, puedes pulsarlo para pasar a la siguiente escena.</li>
+            <li><strong>Botón “Siguiente Escena” (abajo a la derecha)</strong><br>Este botón solo se activará después de seleccionar una respuesta. Una vez respondido, puedes pulsarlo para pasar a la siguiente escena.</li>
           </ul>
 
           <h3>2. Número de escenas</h3>
           <p>El estudio consta de <strong>30 escenas</strong> en total.</p>
+          <p>Las escenas se mostrarán una por una, y deberás evaluar cada una individualmente.</p>
           
           <h3>3. Finalización del estudio</h3>
           <ul>
@@ -270,7 +272,7 @@
             <li>No necesitas descargar ni enviar manualmente ningún archivo de resultados.</li>
           </ul>
 
-          <p>Si tienes dudas durante el estudio, avísanos antes de comenzar.</p>
+          <p>Si tienes dudas durante el estudio, avísanos en cualquier momento!</p>
           <p><strong>Muchas gracias por tu ayuda 😄</strong></p>
         `
       }
