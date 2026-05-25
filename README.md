@@ -57,6 +57,7 @@ on mobile connections.
   "year": 2026,
   "primaryUrl": "https://doi.org/...",
   "teaser": "publications/paper-teaser.webp",
+  "teaserFit": "cover",
   "pdfAsset": "publications/paper.pdf",
   "videoUrl": "https://...",
   "projectUrl": "https://...",
@@ -65,7 +66,9 @@ on mobile connections.
 ```
 
 Optional author field `equalContribution: true` displays an asterisk after
-that author. Papers are sorted newest-first automatically.
+that author. Papers are sorted newest-first automatically. Use
+`"teaserFit": "contain"` for diagrams or collages that must remain fully
+visible, and `"cover"` for images that can be cropped to fill the card.
 
 ## Deploy
 

@@ -1,5 +1,70 @@
 [
   {
+    "id": "coarse2real",
+    "title": "Coarse-to-Real: Generative Rendering for Populated Dynamic Scenes",
+    "authors": [
+      {
+        "name": "Gonzalo Gomez-Nogales",
+        "highlighted": true
+      },
+      {
+        "name": "Yicong Hong"
+      },
+      {
+        "name": "Chongjian Ge"
+      },
+      {
+        "name": "Peiye Zhuang"
+      },
+      {
+        "name": "Marc Comino-Trinidad"
+      },
+      {
+        "name": "Dan Casas"
+      },
+      {
+        "name": "Yi Zhou"
+      }
+    ],
+    "venue": "arXiv preprint",
+    "year": 2026,
+    "primaryUrl": "https://arxiv.org/abs/2601.22301",
+    "projectUrl": "https://gonzalognogales.github.io/coarse2real/",
+    "teaser": "publications/C2Rteaser.jpg",
+    "teaserFit": "contain",
+    "pdfAsset": "publications/C2Rpaper.pdf",
+    "abstract": "Traditional rendering pipelines rely on complex assets, accurate materials and lighting, and substantial computational resources to produce realistic imagery, yet they still face challenges in scalability and realism for populated dynamic scenes. We present C2R (Coarse-to-Real), a generative rendering framework that synthesizes real-style urban crowd videos from coarse 3D simulations. Our approach uses coarse 3D renderings to explicitly control scene layout, camera motion, and human trajectories, while a learned neural renderer generates realistic appearance, lighting, and fine-scale dynamics guided by text prompts. To overcome the lack of paired training data between coarse simulations and real videos, we adopt a two-stage synthetic-real domain-hedging strategy that first learns a strong generative prior from large-scale real footage, and then introduces controllability by using a small amount of paired synthetic coarse-to-fine data to anchor shared implicit spatio-temporal features across domains. The resulting system supports coarse-to-fine control, generalizes across diverse CG and game inputs, and produces temporally consistent, controllable, and realistic urban scene videos from minimal 3D input."
+  },
+  {
+    "id": "bim",
+    "title": "Bridging BIM and reality: A hardware-optimized registration pipeline for mixed reality in indoor construction environments",
+    "authors": [
+      {
+        "name": "Marcos Arroyo-Ruiz"
+      },
+      {
+        "name": "Gonzalo Gomez-Nogales",
+        "highlighted": true
+      },
+      {
+        "name": "José Antonio Gómez-Fernández"
+      },
+      {
+        "name": "Carlos Andújar"
+      },
+      {
+        "name": "Marc Comino-Trinidad"
+      }
+    ],
+    "venue": "Computers & Graphics",
+    "year": 2026,
+    "primaryUrl": "https://www.sciencedirect.com/science/article/pii/S0097849326000993",
+    "teaser": "publications/BIMteaser.jpg",
+    "teaserFit": "contain",
+    "pdfAsset": "publications/BIMpaper.pdf",
+    "abstract": "Building Information Modeling (BIM) has transformed the Architecture, Engineering, and Construction (AEC) industry by digitizing project data, yet its full potential remains unrealized due to persistent gaps between virtual models and physical sites. These gaps contribute to inefficiencies, with studies reporting substantial waste in labor and coordination. Extended Reality (XR) technologies offer a promising solution by enabling immersive, real-scale visualization of BIM models on-site. This article introduces a Mixed Reality (MR) application for Microsoft HoloLens 2 that superimposes BIM representations onto construction environments at a 1:1 scale, supporting real-time detection of differences between the as-designed BIM model and the as-built construction on site. We present a robust registration pipeline that integrates commercial XR hardware with advanced algorithms to achieve precise alignment under challenging conditions. To validate the system, we conducted a controlled user study comparing three registration paradigms (manual gesture-based, QR-assisted, and fully automatic) and analyzing their impact on alignment accuracy and user experience (UX) in AEC-related tasks. Results show that our automatic approach provides advantages over state-of-the-art alternatives and significantly improves registration precision and usability ratings over the baseline methods. Furthermore, the study demonstrates that alignment errors strongly influence spatial perception and decision-making, highlighting the necessity of high-fidelity registration for effective MR integration in construction workflows."
+  },
+  {
     "id": "unlocking-thickness-modeling-codimensional-contact",
     "title": "Unlocking Thickness Modeling for Codimensional Contact Simulation",
     "authors": [
@@ -25,6 +90,7 @@
     "primaryUrl": "https://arxiv.org/abs/2510.10256",
     "teaser": "publications/UTMCCSteaser.jpg",
     "pdfAsset": "publications/UTMCCSpaper.pdf",
+    "teaserFit": "contain",
     "abstract": "In this work we analyze and address a fundamental restriction that blocks the reliable application of codimensional yarn-level and shell models with thickness to simulate real-world woven and knit fabrics. We introduce a practical contact-processing model for thickened codimensional simulation that removes resolution restrictions while guaranteeing contact-locking-free, non-intersecting simulations. We demonstrate it across varied materials, patterns, simulation conditions, mesh resolutions, and both rod and shell models integrated with the IPC barrier."
   },
   {
@@ -69,6 +135,7 @@
     "year": 2024,
     "primaryUrl": "https://doi.org/10.1145/3687266",
     "teaser": "publications/RCID3DCAteaser.jpg",
+    "teaserFit": "contain",
     "pdfAsset": "publications/RCID3DCApaper.pdf",
     "videoUrl": "https://www.youtube.com/watch?v=gP8FFeKRqx0&ab_channel=DanCasas",
     "projectUrl": "https://mslab.es/projects/Dense3DCrowds/",

@@ -18,6 +18,7 @@ type Action = {
 const { publication, compact = false, showAbstract = false } = Astro.props
 const teaser = compact ? undefined : getPublicationTeaser(publication.teaser)
 const pdfHref = getPublicationPdf(publication.pdfAsset)
+const teaserFit = publication.teaserFit ?? 'cover'
 
 const actions: Action[] = [
 	pdfHref && { label: 'PDF', href: pdfHref, className: 'publication-link--pdf' },
@@ -35,11 +36,14 @@ const actions: Action[] = [
 >
 	{
 		teaser && (
-			<div class='aspect-[7/5] overflow-hidden rounded-lg bg-base-300'>
+			<div class:list={['aspect-[7/5] overflow-hidden rounded-lg', teaserFit === 'contain' ? 'bg-white' : 'bg-base-300']}>
 				<Image
 					src={teaser}
 					alt={`Teaser for ${publication.title}`}
-					class='h-full w-full object-cover'
+					class:list={[
+						'h-full w-full',
+						teaserFit === 'contain' ? 'object-contain' : 'object-cover',
+					]}
 					format='webp'
 					width={448}
 					widths={[320, 448]}

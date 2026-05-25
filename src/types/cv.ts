@@ -6,6 +6,14 @@ export interface Experience {
   description?: string;
 }
 
+export type InternshipBrand = 'adobe' | 'roblox';
+
+export interface Internship extends Experience {
+  brand: InternshipBrand;
+  office?: string;
+  current?: boolean;
+}
+
 export interface Education {
   school: string;
   time: string;

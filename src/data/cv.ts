@@ -1,26 +1,37 @@
-export const experiences = [
+import type { Experience, Internship } from '@/types/cv'
+
+export const internships = [
 	{
-		company: 'Adobe Inc.',
-		time: 'Jun 2024 - Dec 2024',
+		company: 'Adobe',
+		brand: 'adobe',
+		office: 'Paris Office',
+		time: 'May 2024 - December 2024',
 		title: 'Research Intern',
 		location: 'Paris, France',
 		description: '',
 	},
 	{
-		company: 'Adobe Inc.',
-		time: 'May 2025 - Sep 2025',
+		company: 'Adobe',
+		brand: 'adobe',
+		office: 'Headquarters',
+		time: 'May 2025 - September 2025',
 		title: 'Research Intern',
-		location: 'San Jose, USA',
+		location: 'San Jose, California, USA',
 		description: '',
 	},
-	// {
-	// 	company: 'Radium Institute (Institut du Radium)',
-	// 	time: '1914 - 1934',
-	// 	title: 'Director',
-	// 	location: 'Paris, France',
-	// 	description: 'Led groundbreaking studies on radioactivity and mentored future Nobel Prize laureates.',
-	// },
-];
+	{
+		company: 'Roblox',
+		brand: 'roblox',
+		office: 'Headquarters',
+		time: 'May 2026 - September 2026',
+		title: 'Applied Scientist Intern',
+		location: 'San Mateo, California, USA',
+		description: '',
+		current: true,
+	},
+] satisfies Internship[]
+
+export const experiences: Experience[] = internships
 
 export const education = [
 	{

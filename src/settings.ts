@@ -24,7 +24,7 @@ export const social = {
 }
 
 export const template = {
-	website_url: 'http://localhost:4321', // Replace with your public site origin before deploying.
+	website_url: 'https://gonzalogn.com/', // Replace with your public site origin before deploying. https://gonzalogn.com/
 	transitions: true,
 	lightTheme: 'light', // Select one of the Daisy UI Themes or create your own
 	darkTheme: 'light', // Keep light theme for both

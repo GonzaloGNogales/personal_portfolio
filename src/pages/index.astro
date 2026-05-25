@@ -2,10 +2,12 @@
 import Layout from '../layouts/Layout.astro'
 
 import { profile } from '@/settings'
+import { internships } from '@/data/cv'
 import { getPublications } from '@/lib/publications'
 import ProfilePictures from '@/assets/profile_photo.jpeg'
 import Hero from '@/components/ui/Hero.astro'
 import Grid from '@/components/ui/Grid.astro'
+import InternshipCards from '@/components/ui/InternshipCards.astro'
 import ArticleList from '@/components/ui/ArticleList.astro'
 
 const { fullName, title, institute, research_areas } = profile
@@ -22,6 +24,10 @@ const publications = await getPublications()
 
 	<section class='border-y py-10 sm:py-12'>
 		<Grid gridTitle='Research Areas' gridItems={research_areas} />
+	</section>
+
+	<section id='internships' class='border-b py-10 sm:py-12'>
+		<InternshipCards internships={internships} />
 	</section>
 
 	<section id='publications' class='py-10 sm:py-12'>

@@ -32,6 +32,7 @@ const publications = defineCollection({
         year: z.number().int(),
         primaryUrl: z.string().url(),
         teaser: z.string().optional(),
+        teaserFit: z.enum(["cover", "contain"]).optional(),
         pdfAsset: z.string().optional(),
         videoUrl: z.string().url().optional(),
         projectUrl: z.string().url().optional(),
