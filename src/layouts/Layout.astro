@@ -1,11 +1,10 @@
 ---
 import { ClientRouter } from 'astro:transitions';
 
-import BetterIcon from '../components/ui/BetterIcon.astro'
 import Navbar from '../components/ui/Navbar.astro'
 import Head from '../components/Head.astro'
 
-import { seo, profile, template } from '../settings'
+import { seo, template } from '../settings'
 import Footer from '../components/ui/Footer.astro'
 
 type Props = {
@@ -30,7 +29,7 @@ const {
 	<body>
 		<div class="min-h-screen bg-base-100">
 			<Navbar />
-			<main class='p-8 pt-10 lg:pt-16 lg:max-w-5xl max-w-full mx-auto min-h-screen flex flex-col justify-between'>
+			<main class='mx-auto flex min-h-screen w-full max-w-6xl flex-col justify-between px-4 pb-6 pt-8 sm:px-6 sm:pt-10 lg:px-8 lg:pt-14'>
 				<slot />
 				<Footer />
 			</main>
@@ -44,5 +43,9 @@ const {
 		margin: 0;
 		width: 100%;
 		height: 100%;
+	}
+
+	body {
+		overflow-x: hidden;
 	}
 </style>

@@ -1,0 +1,152 @@
+---
+import { Image } from 'astro:assets'
+import { getPublicationPdf, getPublicationTeaser } from '@/lib/publicationAssets'
+import type { Publication } from '@/lib/publications'
+
+interface Props {
+	publication: Publication
+	compact?: boolean
+	showAbstract?: boolean
+}
+
+type Action = {
+	label: string
+	href: string
+	className: string
+}
+
+const { publication, compact = false, showAbstract = false } = Astro.props
+const teaser = compact ? undefined : getPublicationTeaser(publication.teaser)
+const pdfHref = getPublicationPdf(publication.pdfAsset)
+
+const actions: Action[] = [
+	pdfHref && { label: 'PDF', href: pdfHref, className: 'publication-link--pdf' },
+	publication.videoUrl && { label: 'Video', href: publication.videoUrl, className: 'publication-link--video' },
+	publication.projectUrl && { label: 'Project', href: publication.projectUrl, className: 'publication-link--project' },
+].filter((action): action is Action => Boolean(action))
+---
+
+<article
+	class:list={[
+		'min-w-0',
+		!compact && 'grid gap-5 rounded-xl border border-base-300 bg-base-200/60 p-4 shadow-sm sm:p-6 md:grid-cols-[14rem_minmax(0,1fr)]',
+		compact && 'py-3',
+	]}
+>
+	{
+		teaser && (
+			<div class='aspect-[7/5] overflow-hidden rounded-lg bg-base-300'>
+				<Image
+					src={teaser}
+					alt={`Teaser for ${publication.title}`}
+					class='h-full w-full object-cover'
+					format='webp'
+					width={448}
+					widths={[320, 448]}
+					sizes='(max-width: 767px) calc(100vw - 3rem), 14rem'
+					loading='lazy'
+				/>
+			</div>
+		)
+	}
+
+	<div class='min-w-0'>
+		<h3 class:list={['font-semibold leading-snug', compact ? 'text-lg' : 'text-xl']}>
+			<a
+				href={publication.primaryUrl}
+				class='transition-colors hover:text-accent focus-visible:text-accent'
+				target='_blank'
+				rel='noopener noreferrer'
+			>
+				{publication.title}
+			</a>
+		</h3>
+
+		<p class='mt-2 text-sm leading-relaxed text-base-content/75'>
+			{
+				publication.authors.map((author, index) => (
+					<>
+						{index > 0 && ', '}
+						<span class:list={[author.highlighted && 'font-semibold text-base-content']}>
+							{author.name}
+							{author.equalContribution && <sup aria-label='equal contribution'>*</sup>}
+						</span>
+					</>
+				))
+			}
+		</p>
+
+		<p class='mt-2 text-sm text-base-content/80'>
+			<span class='italic'>{publication.venue}</span>
+			<span aria-hidden='true'> &middot; </span>
+			<time datetime={String(publication.year)}>{publication.year}</time>
+		</p>
+
+		{
+			showAbstract && publication.abstract && (
+				<p class='mt-4 text-sm leading-relaxed text-base-content/80 sm:text-base'>
+					{publication.abstract}
+				</p>
+			)
+		}
+
+		{
+			!compact && actions.length > 0 && (
+				<div class='mt-4 flex flex-wrap gap-2' aria-label={`${publication.title} resources`}>
+					{actions.map((action) => (
+						<a
+							href={action.href}
+							class:list={['publication-link btn btn-sm', action.className]}
+							target='_blank'
+							rel='noopener noreferrer'
+						>
+							{action.label}
+						</a>
+					))}
+				</div>
+			)
+		}
+	</div>
+</article>
+
+<style>
+	.publication-link {
+		background: transparent;
+		transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease;
+	}
+
+	.publication-link--pdf {
+		border-color: #e84855;
+		color: #c82d3b;
+	}
+
+	.publication-link--video {
+		border-color: #e36d22;
+		color: #b94f0c;
+	}
+
+	.publication-link--project {
+		border-color: #2174d6;
+		color: #1458ad;
+	}
+
+	.publication-link:hover,
+	.publication-link:focus-visible {
+		color: white;
+	}
+
+	.publication-link--pdf:hover,
+	.publication-link--pdf:focus-visible {
+		background-color: #e84855;
+	}
+
+	.publication-link--video:hover,
+	.publication-link--video:focus-visible {
+		background-color: #e36d22;
+	}
+
+	.publication-link--project:hover,
+	.publication-link--project:focus-visible {
+		background-color: #2174d6;
+	}
+</style>

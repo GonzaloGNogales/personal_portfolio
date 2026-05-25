@@ -1,24 +1,24 @@
 ---
 import Layout from '@/layouts/Layout.astro'
-import {template} from '@/settings'
-import {getCollection, render} from 'astro:content'
+import { getCollection, render, type CollectionEntry } from 'astro:content'
+import type { GetStaticPaths } from 'astro'
 
-export async function getStaticPaths(): Promise<Array<{ params: { slug: string }, props: { post: any } }>> {
-    const blogEntries = await getCollection("blog");
+export const getStaticPaths = (async () => {
+    const blogEntries = await getCollection('blog')
 
-    const posts = blogEntries
-        .map(post => {
-        const slug = post.id
-            return {
-            params: { slug },
-            props: { post },
-            }
-    })
-    return posts
+    return blogEntries.map(post => ({
+        params: { slug: post.id },
+        props: { post },
+    }))
+}) satisfies GetStaticPaths
+
+interface Props {
+	post: CollectionEntry<'blog'>
 }
-const {post} = Astro.props;
-const { title, date, tags} = post.data; 
-const { Content } = await render(post);
+
+const { post } = Astro.props
+const { title, date, tags = [] } = post.data
+const { Content } = await render(post)
 ---
 
 <Layout title={title}>

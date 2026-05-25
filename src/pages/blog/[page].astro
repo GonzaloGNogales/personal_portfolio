@@ -4,24 +4,38 @@ import Layout from '@/layouts/Layout.astro'
 import { trimExcerpt } from '@/lib/utils'
 import { template } from '@/settings'
 import { getCollection } from 'astro:content'
+import type { GetStaticPaths, Page } from 'astro'
 
-export async function getStaticPaths({ paginate }): Promise<Astro.getStaticPathsResult> {
-    const blogEntries = await getCollection("blog");
+type PostSummary = {
+	title: string
+	date: string
+	badge?: string
+	excerpt: string
+	slug: string
+}
+
+export const getStaticPaths = (async ({ paginate }) => {
+    const blogEntries = await getCollection('blog')
 
     const posts = blogEntries
         .map(post => ({
             title: post.data.title,
             date: post.data.date,
-            badge: post.data.tags[0],
+            badge: post.data.tags?.[0],
             excerpt: trimExcerpt(post.data.excerpt),
             slug: `${template.base}/blog/${post.id}`,
         }))
-        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
 
     return paginate(posts, {
         pageSize: template.postPerPage,
-    });
+    })
+}) satisfies GetStaticPaths
+
+interface Props {
+	page: Page<PostSummary>
 }
+
 const { page } = Astro.props
 ---
 
@@ -39,9 +53,11 @@ const { page } = Astro.props
 										{post.title}
 									</a>
 								</h2>
-								<div class='badge badge-accent badge-outline p-4'>
-									{post.badge}
-								</div>
+								{post.badge && (
+									<div class='badge badge-accent badge-outline p-4'>
+										{post.badge}
+									</div>
+								)}
 							</div>
 							<time datetime={post.date} class='text-sm text-base-content/71'>
 								{new Date(post.date).toLocaleDateString('en-US', {

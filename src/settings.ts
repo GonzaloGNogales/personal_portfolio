@@ -2,7 +2,6 @@ export const profile = {
 	fullName: 'Gonzalo Gómez-Nogales',
 	title: '',
 	institute: '',
-	author_name: '', // Author name to be highlighted in the papers section
 	research_areas: [
 		{ title: 'Computer Graphics', description: '3D rendering, visualization, and graphics programming', field: 'computer-graphics' },
 		{ title: 'Physics Simulation', description: 'Cloth and human body interaction and motion', field: 'physics-simulation' },
@@ -25,7 +24,7 @@ export const social = {
 }
 
 export const template = {
-	website_url: 'https://localhost:4321', // Astro needs to know your site's deployed URL to generate a sitemap. It must start with http:// or https://
+	website_url: 'http://localhost:4321', // Replace with your public site origin before deploying.
 	transitions: true,
 	lightTheme: 'light', // Select one of the Daisy UI Themes or create your own
 	darkTheme: 'light', // Keep light theme for both

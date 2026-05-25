@@ -1,0 +1,77 @@
+[
+  {
+    "id": "unlocking-thickness-modeling-codimensional-contact",
+    "title": "Unlocking Thickness Modeling for Codimensional Contact Simulation",
+    "authors": [
+      {
+        "name": "Gonzalo Gomez-Nogales",
+        "highlighted": true
+      },
+      {
+        "name": "Zhen Chen"
+      },
+      {
+        "name": "Rosalie Martin"
+      },
+      {
+        "name": "Elena Garces"
+      },
+      {
+        "name": "Danny M. Kaufman"
+      }
+    ],
+    "venue": "arXiv preprint",
+    "year": 2025,
+    "primaryUrl": "https://arxiv.org/abs/2510.10256",
+    "teaser": "publications/UTMCCSteaser.jpg",
+    "pdfAsset": "publications/UTMCCSpaper.pdf",
+    "abstract": "In this work we analyze and address a fundamental restriction that blocks the reliable application of codimensional yarn-level and shell models with thickness to simulate real-world woven and knit fabrics. We introduce a practical contact-processing model for thickened codimensional simulation that removes resolution restrictions while guaranteeing contact-locking-free, non-intersecting simulations. We demonstrate it across varied materials, patterns, simulation conditions, mesh resolutions, and both rod and shell models integrated with the IPC barrier."
+  },
+  {
+    "id": "resolving-collisions-dense-3d-crowd-animations",
+    "title": "Resolving Collisions in Dense 3D Crowd Animations",
+    "authors": [
+      {
+        "name": "Gonzalo Gomez-Nogales",
+        "highlighted": true,
+        "equalContribution": true
+      },
+      {
+        "name": "Melania Prieto-Martin",
+        "equalContribution": true
+      },
+      {
+        "name": "Cristian Romero"
+      },
+      {
+        "name": "Marc Comino-Trinidad"
+      },
+      {
+        "name": "Pablo Ramon-Prieto"
+      },
+      {
+        "name": "Anne-Helene Olivier"
+      },
+      {
+        "name": "Ludovic Hoyet"
+      },
+      {
+        "name": "Miguel Otaduy"
+      },
+      {
+        "name": "Julien Pettre"
+      },
+      {
+        "name": "Dan Casas"
+      }
+    ],
+    "venue": "ACM Transactions on Graphics (SIGGRAPH Asia)",
+    "year": 2024,
+    "primaryUrl": "https://doi.org/10.1145/3687266",
+    "teaser": "publications/RCID3DCAteaser.jpg",
+    "pdfAsset": "publications/RCID3DCApaper.pdf",
+    "videoUrl": "https://www.youtube.com/watch?v=gP8FFeKRqx0&ab_channel=DanCasas",
+    "projectUrl": "https://mslab.es/projects/Dense3DCrowds/",
+    "abstract": "We propose a novel contact-aware method to synthesize highly-dense 3D crowds of animated characters. Our physics-based approach models contacts between articulated characters and resolves residual collisions while maintaining the overall input motion. It enables real-time synthesis of dense crowds with markedly improved geometric accuracy and perceived realism, validated quantitatively and through an extensive user study."
+  }
+]

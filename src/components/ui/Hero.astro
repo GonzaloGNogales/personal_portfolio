@@ -5,23 +5,18 @@ import SocialIcons from './SocialIcons.astro';
 const { fullName, title, institute, profilePicture } = Astro.props;
 ---
 
-<style global>
-  html, body {
-    overflow-x: hidden;
-  }
-</style>
-
-<section class="container mx-auto px-4 py-16 flex flex-col-reverse md:flex-row items-start md:items-center gap-8 overflow-x-hidden">
-  <!-- Text Block -->
+<section class="flex flex-col-reverse items-start gap-8 py-10 sm:py-12 md:flex-row md:items-center lg:gap-12 lg:py-16">
   <div class="flex-1 min-w-0 text-center md:text-left">
-    <h1 class="whitespace-nowrap font-bold mb-4 text-[clamp(0.75rem,5vw,2.5rem)] md:text-4xl">
+    <h1 class="mb-4 text-3xl font-bold leading-tight sm:text-4xl">
       Hola! I'm <span class="text-turquoise">{fullName}</span>
     </h1>
-    <p class="text-xl text-gray-600 mb-4">
-      {title}{institute ? ' at ' + institute : ''}
-    </p>
+    {(title || institute) && (
+      <p class="mb-4 text-lg text-gray-600 sm:text-xl">
+        {title}{institute ? ' at ' + institute : ''}
+      </p>
+    )}
 
-    <p class="text-lg mb-6 text-justify break-words">
+    <p class="mb-6 break-words text-left text-base leading-relaxed sm:text-lg">
       I am a third-year PhD student under the supervision of
       <a href="https://dancasas.github.io/" class="university-link" target="_blank" rel="noopener noreferrer"><b>Prof. Dr. Dan Casas</b></a>
       and
@@ -31,7 +26,7 @@ const { fullName, title, institute, profilePicture } = Astro.props;
       in Madrid, Spain. My research interests lie at the intersection of <b>Computer Graphics</b>, <b>Physics Simulation</b> and <b>Machine Learning</b>, with a particular focus on developing novel ways of enhancing 3D Graphics realism, control and interactivity with AI.
     </p>
 
-    <p class="text-lg mb-6 text-justify break-words">
+    <p class="mb-6 break-words text-left text-base leading-relaxed sm:text-lg">
       I completed two research internships at
       <a href="https://research.adobe.com/" class="university-link" target="_blank" rel="noopener noreferrer"><b>Adobe Research</b></a>.
       In <b>2024</b>, I joined the
@@ -49,7 +44,7 @@ const { fullName, title, institute, profilePicture } = Astro.props;
       <a href="https://chongjiange.github.io/" class="university-link" target="_blank" rel="noopener noreferrer">Chongjian Ge</a>.
     </p>
 
-    <p class="text-lg mb-6 text-justify break-words">
+    <p class="mb-6 break-words text-left text-base leading-relaxed sm:text-lg">
       I am dedicated and enthusiastic, with a constant desire to grow and learn from every experience and person around me. Passionate about computer graphics and research, I strive to push my own limits and continuously improve.
     </p>
 
@@ -58,13 +53,11 @@ const { fullName, title, institute, profilePicture } = Astro.props;
     </div>
   </div>
 
-  <!-- Mobile Image Block (larger on phones) -->
-  <div class="w-full md:hidden flex justify-center mb-8 mt-8">
+  <div class="flex w-full justify-center md:hidden">
     <Image src={profilePicture} alt={fullName} class="rounded-lg object-cover w-48 h-48 sm:w-64 sm:h-64 max-w-full" />
   </div>
 
-  <!-- Desktop Image Block (vertically centered) -->
-  <div class="hidden md:flex self-center flex-none justify-center md:-mt-16">
+  <div class="hidden flex-none self-center justify-center md:flex">
     <Image src={profilePicture} alt={fullName} class="rounded-lg object-cover w-80 h-96 max-w-full" />
   </div>
 </section>
@@ -74,7 +67,6 @@ const { fullName, title, institute, profilePicture } = Astro.props;
     color: #40E0D0;
   }
 
-  /* Ensure paragraphs wrap within screen boundaries */
   section p {
     overflow-wrap: break-word;
     hyphens: auto;

@@ -1,5 +1,10 @@
 ---
-import { template } from "@/settings"
+import type { Page } from 'astro'
+
+interface Props {
+  page: Page<unknown>
+}
+
 const { page } = Astro.props
 ---
 <div class="join flex justify-center mt-8">
