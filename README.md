@@ -66,13 +66,32 @@ on mobile connections.
 ```
 
 Optional author field `equalContribution: true` displays an asterisk after
-that author. Papers are sorted newest-first automatically. Use
+that author. Papers appear in exactly the order they are listed in
+`src/data/publications.json`; move an object up or down in that array to
+reorder its card. Use
 `"teaserFit": "contain"` for diagrams or collages that must remain fully
 visible, and `"cover"` for images that can be cropped to fill the card.
 
 ## Deploy
 
-The GitHub Pages workflow deploys pushes to `master`. Before publishing, update
-`template.website_url` in `src/settings.ts` to your public origin. If this is a
-GitHub Pages project site rather than a custom-domain site, also set
-`template.base` to `/personal_portfolio`.
+The GitHub Pages workflow deploys pushes to `master`.
+
+Before the first deployment, enable the deployment target in GitHub:
+
+1. Open the repository on GitHub, then select **Settings > Pages**.
+2. Under **Build and deployment**, set **Source** to **GitHub Actions**.
+3. Re-run the failed workflow or push a new commit.
+
+If Pages has not been enabled with **GitHub Actions** as the source, the build
+can succeed and upload its artifact, but `actions/deploy-pages` cannot create
+the deployment and reports a `404 Not Found` error.
+
+The values in `src/settings.ts` control generated URLs and asset paths after
+deployment; they do not enable GitHub Pages:
+
+- For the custom domain `https://gonzalogn.com/`, keep
+  `template.website_url` set to that URL and `template.base` set to `''`.
+- For the default repository URL
+  `https://gonzalognogales.github.io/personal_portfolio/`, set
+  `template.website_url` to `https://gonzalognogales.github.io` and
+  `template.base` to `/personal_portfolio`.
