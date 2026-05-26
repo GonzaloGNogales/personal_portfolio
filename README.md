@@ -74,24 +74,26 @@ visible, and `"cover"` for images that can be cropped to fill the card.
 
 ## Deploy
 
-The GitHub Pages workflow deploys pushes to `master`.
+The public site at `https://gonzalogn.com/` is served by Netlify. Netlify is
+the deployment target for this repository, and its connected branch should be
+`master`.
 
-Before the first deployment, enable the deployment target in GitHub:
+In Netlify, configure the site with:
 
-1. Open the repository on GitHub, then select **Settings > Pages**.
-2. Under **Build and deployment**, set **Source** to **GitHub Actions**.
-3. Re-run the failed workflow or push a new commit.
+- Build command: `npm run build`
+- Publish directory: `dist`
+- Production branch: `master`
+- Custom domain: `gonzalogn.com`
 
-If Pages has not been enabled with **GitHub Actions** as the source, the build
-can succeed and upload its artifact, but `actions/deploy-pages` cannot create
-the deployment and reports a `404 Not Found` error.
+After those settings are in place, publishing changes is simply:
 
-The values in `src/settings.ts` control generated URLs and asset paths after
-deployment; they do not enable GitHub Pages:
+```powershell
+git push origin master
+```
 
-- For the custom domain `https://gonzalogn.com/`, keep
-  `template.website_url` set to that URL and `template.base` set to `''`.
-- For the default repository URL
-  `https://gonzalognogales.github.io/personal_portfolio/`, set
-  `template.website_url` to `https://gonzalognogales.github.io` and
-  `template.base` to `/personal_portfolio`.
+Do not configure `gonzalogn.com` in GitHub Pages while Netlify is serving the
+domain. The GitHub Pages action is a separate deployment system and is not
+needed for the current hosting setup.
+
+Keep `template.website_url` in `src/settings.ts` set to
+`https://gonzalogn.com/` and `template.base` set to `''`.
