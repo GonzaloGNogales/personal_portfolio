@@ -6,7 +6,7 @@
 =================================================================== */
 const LINKS = {
   paper: null,     // e.g. "https://doi.org/10.1111/cgf.XXXXX"
-  code: null,      // e.g. "https://github.com/USER/gnochi"
+  code: "https://github.com/GonzaloGNogales/gnochi",      // e.g. "https://github.com/USER/gnochi"
   dataset: null,   // e.g. "https://huggingface.co/datasets/USER/gnochi"
 };
 
