@@ -17,11 +17,14 @@ type Action = {
 
 const { publication, compact = false, showAbstract = false } = Astro.props
 const teaser = compact ? undefined : getPublicationTeaser(publication.teaser)
+const teaserUrl = compact ? undefined : publication.teaserUrl
+const hasTeaser = Boolean(teaser || teaserUrl)
 const pdfHref = getPublicationPdf(publication.pdfAsset)
 const teaserFit = publication.teaserFit ?? 'cover'
 
 const actions: Action[] = [
 	pdfHref && { label: 'PDF', href: pdfHref, className: 'publication-link--pdf' },
+	publication.paperUrl && { label: 'Paper', href: publication.paperUrl, className: 'publication-link--paper' },
 	publication.videoUrl && { label: 'Video', href: publication.videoUrl, className: 'publication-link--video' },
 	publication.projectUrl && { label: 'Project', href: publication.projectUrl, className: 'publication-link--project' },
 ].filter((action): action is Action => Boolean(action))
@@ -30,26 +33,42 @@ const actions: Action[] = [
 <article
 	class:list={[
 		'min-w-0',
-		!compact && 'grid gap-5 rounded-xl border border-base-300 bg-base-200/60 p-4 shadow-sm sm:p-6 md:grid-cols-[14rem_minmax(0,1fr)]',
+		!compact && 'grid gap-5 rounded-xl border border-base-300 bg-base-200/60 p-4 shadow-sm sm:p-6',
+		!compact && hasTeaser && 'md:grid-cols-[14rem_minmax(0,1fr)]',
 		compact && 'py-3',
 	]}
 >
 	{
-		teaser && (
+		hasTeaser && (
 			<div class:list={['aspect-[7/5] overflow-hidden rounded-lg', teaserFit === 'contain' ? 'bg-white' : 'bg-base-300']}>
-				<Image
-					src={teaser}
-					alt={`Teaser for ${publication.title}`}
-					class:list={[
-						'h-full w-full',
-						teaserFit === 'contain' ? 'object-contain' : 'object-cover',
-					]}
-					format='webp'
-					width={448}
-					widths={[320, 448]}
-					sizes='(max-width: 767px) calc(100vw - 3rem), 14rem'
-					loading='lazy'
-				/>
+				{teaser ? (
+					<Image
+						src={teaser}
+						alt={`Teaser for ${publication.title}`}
+						class:list={[
+							'h-full w-full',
+							teaserFit === 'contain' ? 'object-contain' : 'object-cover',
+						]}
+						format='webp'
+						width={448}
+						widths={[320, 448]}
+						sizes='(max-width: 767px) calc(100vw - 3rem), 14rem'
+						loading='lazy'
+					/>
+				) : (
+					<img
+						src={teaserUrl}
+						alt={`Teaser for ${publication.title}`}
+						class:list={[
+							'h-full w-full',
+							teaserFit === 'contain' ? 'object-contain' : 'object-cover',
+						]}
+						width={publication.teaserWidth ?? 448}
+						height={publication.teaserHeight ?? 320}
+						loading='lazy'
+						decoding='async'
+					/>
+				)}
 			</div>
 		)
 	}
@@ -124,6 +143,11 @@ const actions: Action[] = [
 		color: #c82d3b;
 	}
 
+	.publication-link--paper {
+		border-color: #e84855;
+		color: #c82d3b;
+	}
+
 	.publication-link--video {
 		border-color: #e36d22;
 		color: #b94f0c;
@@ -141,6 +165,11 @@ const actions: Action[] = [
 
 	.publication-link--pdf:hover,
 	.publication-link--pdf:focus-visible {
+		background-color: #e84855;
+	}
+
+	.publication-link--paper:hover,
+	.publication-link--paper:focus-visible {
 		background-color: #e84855;
 	}
 

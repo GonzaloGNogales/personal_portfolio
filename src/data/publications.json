@@ -1,5 +1,36 @@
 [
   {
+    "id": "gnochi",
+    "title": "GNOCHI: Generative Neural mOdel for Close Human-Human Interactions",
+    "authors": [
+      {
+        "name": "Gonzalo Gómez-Nogales",
+        "highlighted": true,
+        "equalContribution": true
+      },
+      {
+        "name": "Marc Comino-Trinidad",
+        "equalContribution": true
+      },
+      {
+        "name": "Andrés Casado-Elvira"
+      },
+      {
+        "name": "Dan Casas"
+      }
+    ],
+    "venue": "Computer Graphics Forum (SCA)",
+    "year": 2026,
+    "primaryUrl": "https://doi.org/10.1111/cgf.70561",
+    "teaserUrl": "/GNOCHI/static/images/teaser_half.png",
+    "teaserWidth": 652,
+    "teaserHeight": 649,
+    "teaserFit": "contain",
+    "paperUrl": "https://arxiv.org/pdf/2607.10408",
+    "projectUrl": "https://gonzalogn.com/GNOCHI/",
+    "abstract": "Creating realistic 3D human-human interactions is challenging because human bodies have many degrees of freedom and generated poses must remain physically plausible and collision-free. GNOCHI introduces a conditional variational autoencoder that generates diverse reaction poses for one human conditioned on the pose of another. The method addresses limited interaction data through automated, physically plausible pose augmentation and uses a collision-aware self-supervised loss based on volumetric proxies. It produces a wide variety of controlled, plausible close-contact interactions that existing methods cannot generate reliably."
+  },
+  {
     "id": "coarse2real",
     "title": "Coarse-to-Real: Generative Rendering for Populated Dynamic Scenes",
     "authors": [

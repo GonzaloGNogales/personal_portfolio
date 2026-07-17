@@ -39,7 +39,7 @@ card:
 
 1. Add an object to `src/data/publications.json`. Use a unique `id`.
 2. Place any teaser image or downloadable PDF in `src/assets/publications/`.
-3. Set `teaser` and `pdfAsset` to their `publications/...` asset paths, or omit either field.
+3. Set `teaser` and `pdfAsset` to their `publications/...` asset paths, or omit either field. To reuse an image from `public/`, set `teaserUrl` to its root-relative URL. Use `paperUrl` for an externally hosted paper or publisher landing page.
 4. Run `npm.cmd run build`. Astro validates the data and reports missing assets.
 
 Use WebP or AVIF for teaser images when possible so the homepage remains fast
@@ -59,6 +59,7 @@ on mobile connections.
   "teaser": "publications/paper-teaser.webp",
   "teaserFit": "cover",
   "pdfAsset": "publications/paper.pdf",
+  "paperUrl": "https://doi.org/...",
   "videoUrl": "https://...",
   "projectUrl": "https://...",
   "abstract": "A short summary for the publications page."
@@ -71,6 +72,8 @@ that author. Papers appear in exactly the order they are listed in
 reorder its card. Use
 `"teaserFit": "contain"` for diagrams or collages that must remain fully
 visible, and `"cover"` for images that can be cropped to fill the card.
+Public teaser images can also provide `teaserWidth` and `teaserHeight` to
+preserve their intrinsic dimensions while the page loads.
 
 ## Deploy
 
