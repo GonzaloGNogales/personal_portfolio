@@ -1,0 +1,380 @@
+/*
+ * Every screen is drawn on a fixed 1200 x 880 canvas (#stage) that app.js scales to fit
+ * the window, so the layout has the same proportions on every display. All boxes have
+ * fixed sizes: switching language only changes the text inside them, never their size
+ * or position.
+ */
+:root {
+  --bg: #eceef1;
+  --surface: #ffffff;
+  --text: #1f2328;
+  --muted: #5b6370;
+  --border: #d5d9e0;
+  --accent: #2458c6;
+  --accent-soft: #e6edfb;
+  --ready: #1a7f37;
+  --danger: #b42318;
+  --video-bg: #d9dce1;
+  --radius: 10px;
+}
+
+* { box-sizing: border-box; }
+
+html, body { margin: 0; height: 100%; overflow: hidden; background: var(--bg); }
+
+body {
+  touch-action: manipulation; /* no double-tap zoom on phones */
+  color: var(--text);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial,
+    "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
+  font-size: 16px;
+  line-height: 1.45;
+}
+
+[hidden] { display: none !important; }
+
+/* ------------------------------------------------------------------ stage */
+
+.stage {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 1200px;  /* set from CONFIG by fitStage (1200 x 880 desktop, 420 x 920 phone) */
+  height: 880px;
+  transform-origin: 0 0;
+}
+
+.screen {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 40px;
+}
+
+.card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+h1, h2 { margin: 0; line-height: 1.25; width: 100%; text-align: center; }
+h1 { font-size: 27px; }
+h2 { font-size: 23px; }
+.label { display: block; width: 100%; text-align: center; font-weight: 600; font-size: 15px; }
+.muted { color: var(--muted); }
+
+.status { color: var(--danger); font-size: 14px; }
+.status.info { color: var(--muted); }
+.status.centered { height: 22px; margin: 8px 0 0; }
+
+.actions { display: flex; justify-content: center; gap: 16px; }
+
+.btn {
+  width: 240px;
+  height: 48px;
+  flex: none;
+  border: none;
+  border-radius: 8px;
+  padding: 0 12px;
+  font-size: 16px;
+  font-family: inherit;
+  white-space: nowrap;
+  cursor: pointer;
+  background: #e3e6ea;
+  color: var(--text);
+}
+.btn.primary { background: var(--accent); color: #fff; }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.btn:not(:disabled):hover { filter: brightness(0.95); }
+
+/* ------------------------------------------------------------------ start */
+
+.start-card { width: 840px; height: 620px; padding: 44px 40px; justify-content: space-between; }
+.start-card .label { font-size: 16px; }
+.start-card h1 { font-size: 31px; }
+.language-buttons { display: flex; justify-content: center; gap: 12px; }
+.lang-btn {
+  width: 172px;
+  height: 50px;
+  border: 2px solid var(--border);
+  background: #f5f6f8;
+  color: var(--text);
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: inherit;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.lang-btn.selected { background: var(--accent); border-color: var(--accent); color: #fff; }
+.start-card h1 { height: 80px; display: flex; align-items: center; justify-content: center; }
+.start-subtitle, .start-help { width: 100%; margin: 0; display: flex; align-items: center; justify-content: center; text-align: center; }
+.start-subtitle { height: 58px; font-size: 19px; }
+.start-help { height: 48px; font-size: 16px; }
+
+/* ------------------------------------------------------------------ instructions */
+
+.instructions-card { width: 1000px; height: 840px; padding: 26px 36px 14px; text-align: left; }
+.instructions-scroll { width: 100%; height: 700px; overflow-y: auto; padding-right: 12px; margin-bottom: 14px; }
+.prose h2 { margin-bottom: 6px; }
+.prose h3 { margin: 12px 0 2px; font-size: 16.5px; }
+.prose p, .prose li { color: #333a44; font-size: 14.5px; line-height: 1.4; }
+.prose p { margin: 6px 0; }
+.prose ul, .prose ol { padding-left: 22px; margin: 2px 0; }
+.prose li { margin: 2px 0; }
+.prose .notice { background: #fff4d6; border: 1px solid #e8c567; border-radius: 8px; padding: 8px 12px; }
+
+/* ------------------------------------------------------------------ messages */
+
+.message-card { width: 760px; height: 400px; padding: 36px 40px; justify-content: space-between; }
+.message-card h2 { height: 64px; display: flex; align-items: center; justify-content: center; }
+.message-text { width: 100%; height: 170px; overflow-y: auto; display: flex; flex-direction: column; justify-content: center; font-size: 17px; }
+.message-text p { margin: 8px 0; }
+.message-card > p, #end-offline { width: 100%; margin: 0; font-size: 17px; }
+#end-offline { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+#end-offline p { width: 100%; margin: 0; text-align: center; }
+
+/* ------------------------------------------------------------------ anchoring */
+
+.anchor-layout { width: 1120px; display: flex; flex-direction: column; align-items: center; }
+.anchor-layout h2 { height: 30px; }
+.anchor-tile span { width: 100%; text-align: center; }
+.anchor-text { width: 1000px; height: 66px; margin: 10px 0 14px; font-size: 15px; line-height: 22px; color: #333a44; display: flex; align-items: center; justify-content: center; text-align: center; }
+.anchor-grid { display: grid; grid-template-columns: repeat(2, 280px); gap: 14px 28px; margin-bottom: 18px; }
+.anchor-tile { display: flex; flex-direction: column; gap: 6px; align-items: center; }
+.anchor-tile .video-frame { width: 280px; height: 280px; }
+.anchor-tile span { height: 18px; font-weight: 600; font-size: 14px; line-height: 18px; }
+
+/* ------------------------------------------------------------------ video */
+
+.video-frame { position: relative; background: var(--video-bg); border-radius: 8px; overflow: hidden; flex: none; }
+.video-frame video {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain;
+  pointer-events: none; /* no pause, seek or context menu */
+}
+.video-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(217, 220, 225, 0.85);
+  color: var(--muted);
+  font-size: 15px;
+  border: none;
+}
+.video-overlay.play { font-size: 48px; cursor: pointer; color: var(--accent); }
+
+.progress { width: 100%; height: 5px; background: var(--border); border-radius: 3px; overflow: hidden; flex: none; }
+.progress-fill { height: 100%; width: 0; background: var(--accent); }
+
+/* ------------------------------------------------------------------ trial */
+
+.screen.trial { justify-content: flex-start; padding: 18px 20px 20px; }
+
+.trial-header { width: 1160px; height: 40px; display: flex; align-items: center; flex: none; }
+.badge {
+  width: 190px;
+  height: 34px;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 15px;
+  white-space: nowrap;
+}
+.badge.practice { background: #fff4d6; border-color: #e8c567; }
+.description {
+  flex: 1;
+  margin: 0;
+  padding-right: 190px; /* same as the badge, so the text is centred on the page */
+  text-align: center;
+  font-size: 17px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.trial-video { width: 490px; height: 490px; margin-top: 10px; }
+.trial-progress { width: 490px; margin-top: 6px; }
+
+/* Rating grid: one statement column + six identical option columns. Every row and
+   every header cell has a fixed height, whatever the length of the text. */
+.rating {
+  width: 1160px;
+  margin-top: 14px;
+  background: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+  flex: none;
+}
+.rating-row { display: grid; grid-template-columns: 1fr repeat(6, 100px); align-items: stretch; }
+.rating-head { height: 58px; background: #f6f7f9; border-bottom: 1px solid #e6e8ec; }
+.rating-head > div { display: flex; align-items: center; justify-content: center; text-align: center; padding: 0 6px; font-size: 12px; line-height: 15px; font-weight: 600; color: var(--muted); }
+.rating-head > .statement-head { justify-content: flex-start; padding-left: 16px; font-size: 13px; }
+#rating-body .rating-row { height: 52px; border-bottom: 1px solid #eef0f3; }
+#rating-body .rating-row:last-child { border-bottom: none; }
+.statement { display: flex; align-items: center; padding: 0 16px; font-size: 14px; line-height: 19px; }
+.rating-row.answered .statement { color: var(--muted); }
+
+.option { display: flex; align-items: center; justify-content: center; cursor: pointer; }
+.option input { position: absolute; opacity: 0; width: 1px; height: 1px; pointer-events: none; }
+.pill {
+  width: 72px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid #cfd4dc;
+  border-radius: 8px;
+  background: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+  transition: background-color 0.1s, border-color 0.1s;
+}
+@media (hover: hover) {
+  .option:hover .pill { background: var(--accent-soft); border-color: var(--accent); }
+}
+.option input:checked + .pill { background: var(--accent); border-color: var(--accent); color: #fff; }
+.option input:focus-visible + .pill { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.rating.locked { opacity: 0.45; }
+.rating.locked .option { cursor: not-allowed; }
+.rating.locked .option:hover .pill { background: #fff; border-color: #cfd4dc; }
+
+.trial-footer { width: 1160px; height: 48px; margin-top: 14px; display: flex; align-items: center; justify-content: space-between; flex: none; }
+.trial-messages { width: 920px; height: 48px; display: flex; flex-direction: column; justify-content: center; }
+.prompt { font-size: 15px; line-height: 20px; color: var(--muted); }
+.prompt.ready { color: var(--ready); font-weight: 600; }
+.trial-messages .status { line-height: 18px; min-height: 18px; }
+.trial-footer .btn { width: 200px; }
+
+.rating-legend { display: none; }
+
+/* ------------------------------------------------------------------ phone layout
+ * Portrait screens get a tall 420 x 920 canvas (see fitStage). Same elements, stacked
+ * vertically; again every box has a fixed size so languages never change the layout.
+ */
+
+.stage.mobile .screen { padding: 12px; }
+.stage.mobile .actions { width: 100%; gap: 10px; }
+.stage.mobile .actions .btn { flex: 1 1 0; width: auto; }
+
+.stage.mobile .start-card { width: 396px; height: 720px; padding: 30px 20px; }
+.stage.mobile .language-buttons { display: grid; grid-template-columns: repeat(2, 170px); gap: 10px; }
+.stage.mobile .lang-btn { width: 170px; height: 50px; }
+.stage.mobile .start-card h1 { height: 110px; font-size: 26px; }
+.stage.mobile .start-subtitle { height: 110px; font-size: 18px; }
+.stage.mobile .start-help { height: 72px; font-size: 15px; }
+
+.stage.mobile .instructions-card { width: 396px; height: 896px; padding: 18px 16px 8px; }
+.stage.mobile .instructions-scroll { height: 790px; padding-right: 6px; margin-bottom: 10px; }
+.stage.mobile .prose h2 { font-size: 21px; }
+.stage.mobile .prose p, .stage.mobile .prose li { font-size: 14px; }
+.stage.mobile .prose ul, .stage.mobile .prose ol { padding-left: 18px; }
+
+.stage.mobile .message-card { width: 396px; height: 580px; padding: 28px 20px; }
+.stage.mobile .message-card h2 { height: 110px; font-size: 22px; }
+.stage.mobile .message-text { height: 290px; font-size: 16px; }
+.stage.mobile .message-card > p { height: 72px; display: flex; align-items: center; justify-content: center; }
+.stage.mobile #end-offline p { height: 50px; display: flex; align-items: center; justify-content: center; }
+
+.stage.mobile .anchor-layout { width: 396px; }
+.stage.mobile .anchor-layout h2 { font-size: 21px; }
+.stage.mobile .anchor-text { width: 396px; height: 150px; margin: 8px 0 12px; font-size: 14px; line-height: 20px; }
+.stage.mobile .anchor-grid { grid-template-columns: repeat(2, 188px); gap: 12px 16px; margin-bottom: 16px; }
+.stage.mobile .anchor-tile .video-frame { width: 188px; height: 188px; }
+
+.stage.mobile .screen.trial { padding: 12px; }
+.stage.mobile .trial-header { width: 396px; height: 78px; flex-direction: column; justify-content: space-between; }
+.stage.mobile .badge { width: 180px; height: 30px; font-size: 14px; }
+.stage.mobile .description {
+  flex: none;
+  width: 396px;
+  height: 42px;
+  padding: 0;
+  font-size: 14.5px;
+  line-height: 21px;
+  white-space: normal;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.stage.mobile .trial-video { width: 372px; height: 372px; margin-top: 8px; }
+.stage.mobile .trial-progress { width: 372px; }
+
+.stage.mobile .rating { width: 396px; margin-top: 10px; }
+.stage.mobile .rating-head { display: none; }
+.stage.mobile .rating-legend {
+  display: flex;
+  height: 26px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+  background: #f6f7f9;
+  border-bottom: 1px solid #e6e8ec;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.stage.mobile .rating-legend span { width: 50%; overflow: hidden; }
+.stage.mobile .rating-legend span:last-child { text-align: right; }
+.stage.mobile #rating-body .rating-row {
+  height: 96px;
+  grid-template-columns: repeat(6, 1fr);
+  grid-template-rows: 54px 36px;
+  padding: 0 8px 6px;
+}
+.stage.mobile .statement { grid-column: 1 / -1; padding: 0 4px; font-size: 13.5px; line-height: 17px; }
+.stage.mobile .pill { width: 54px; height: 36px; }
+
+.stage.mobile .trial-footer { width: 396px; height: 92px; margin-top: 10px; flex-direction: column; align-items: stretch; justify-content: space-between; }
+/* One two-line box: the prompt, or the error message in its place when there is one. */
+.stage.mobile .trial-messages { width: 396px; height: 40px; }
+.stage.mobile .trial-messages > span {
+  width: 100%;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 13.5px;
+  line-height: 18px;
+}
+.stage.mobile .trial-messages .status:empty { display: none; }
+.stage.mobile .trial-messages:has(.status:not(:empty)) .prompt { display: none; }
+.stage.mobile .trial-footer .btn { width: 396px; height: 46px; }
+
+/* ------------------------------------------------------------------ small window */
+
+.size-warning {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(20, 24, 30, 0.9);
+  color: #fff;
+  text-align: center;
+  font-size: 18px;
+}
+.size-warning p { max-width: 520px; }

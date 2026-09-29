@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="robots" content="noindex">
+  <title>Crowd Motion Study</title>
+  <script>
+    // Relative asset paths need a trailing slash (…/crowds_study/ not …/crowds_study).
+    if (!location.pathname.endsWith('/') && !location.pathname.endsWith('.html')) {
+      location.replace(location.pathname + '/' + location.search);
+    }
+  </script>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script type="module" src="js/app.js"></script>
+</head>
+<body>
+  <!-- Fixed-size canvas, scaled as a whole to fit the window (see fitStage in app.js). -->
+  <div id="stage" class="stage">
+
+    <!-- Start: language choice and welcome -->
+    <section id="screen-start" class="screen">
+      <div class="card start-card">
+        <span class="label" data-t="languageLabel">Language</span>
+        <div id="language-buttons" class="language-buttons"></div>
+        <h1 data-t="startTitle">Welcome</h1>
+        <p id="start-subtitle" class="start-subtitle"></p>
+        <p class="muted start-help" data-t="startHelp"></p>
+        <div class="actions">
+          <button id="start-continue" class="btn primary" data-t="continueBtn">Continue</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Instructions -->
+    <section id="screen-instructions" class="screen" hidden>
+      <div class="card instructions-card">
+        <div id="instructions-content" class="prose instructions-scroll"></div>
+        <div class="actions">
+          <button id="instructions-back" class="btn" data-t="backBtn">Back</button>
+          <button id="instructions-begin" class="btn primary" data-t="beginBtn">Start</button>
+        </div>
+        <p id="instructions-status" class="status centered"></p>
+      </div>
+    </section>
+
+    <!-- Anchoring: the four DEMO clips, watched but not rated -->
+    <section id="screen-anchor" class="screen" hidden>
+      <div class="anchor-layout">
+        <h2 data-t="anchorTitle">Examples</h2>
+        <p class="anchor-text" data-t="anchorText"></p>
+        <div id="anchor-grid" class="anchor-grid"></div>
+        <div class="actions">
+          <button id="anchor-continue" class="btn primary" data-t="continueBtn" disabled>Continue</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Generic message: practice intro and block intros -->
+    <section id="screen-message" class="screen" hidden>
+      <div class="card message-card">
+        <h2 id="message-title"></h2>
+        <div id="message-text" class="message-text"></div>
+        <div class="actions">
+          <button id="message-continue" class="btn primary">Continue</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Trial: one clip, three statements -->
+    <section id="screen-trial" class="screen trial" hidden>
+      <header class="trial-header">
+        <span id="trial-counter" class="badge"></span>
+        <p id="trial-description" class="description"></p>
+      </header>
+
+      <div class="video-frame trial-video">
+        <video id="trial-video" muted playsinline loop preload="auto"
+               disablepictureinpicture disableremoteplayback controlslist="nodownload noplaybackrate nofullscreen"></video>
+        <div id="trial-loading" class="video-overlay" hidden></div>
+        <button id="trial-play" class="video-overlay play" hidden aria-label="Play">▶</button>
+      </div>
+      <div class="progress trial-progress"><div id="trial-progress" class="progress-fill"></div></div>
+
+      <div id="rating" class="rating locked" role="group">
+        <!-- Phone layout only: the scale end points, instead of the six column labels -->
+        <div class="rating-legend"><span id="legend-low"></span><span id="legend-high"></span></div>
+        <div id="rating-head" class="rating-row rating-head"></div>
+        <div id="rating-body"></div>
+      </div>
+
+      <footer class="trial-footer">
+        <div class="trial-messages">
+          <span id="trial-prompt" class="prompt"></span>
+          <span id="trial-status" class="status"></span>
+        </div>
+        <button id="trial-next" class="btn primary" data-t="nextBtn" disabled>Next</button>
+      </footer>
+    </section>
+
+    <!-- End -->
+    <section id="screen-end" class="screen" hidden>
+      <div class="card message-card">
+        <h2 data-t="endTitle">Study complete!</h2>
+        <p data-t="endText"></p>
+        <p id="end-status" class="status centered"></p>
+        <div id="end-offline" hidden>
+          <p class="muted" data-t="offlineNote"></p>
+          <button id="end-download" class="btn" data-t="downloadBtn">Download</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Shown over everything while the window is too small -->
+  <div id="size-warning" class="size-warning" hidden>
+    <p id="size-warning-text"></p>
+  </div>
+</body>
+</html>
