@@ -537,6 +537,7 @@ class SignaturePad {
 
   point(event) {
     const rect = this.canvas.getBoundingClientRect();
+    if (!rect.width || !rect.height) return null;
     return {
       x: (event.clientX - rect.left) * (this.canvas.width / rect.width),
       y: (event.clientY - rect.top) * (this.canvas.height / rect.height)
@@ -546,13 +547,14 @@ class SignaturePad {
   start(event) {
     event.preventDefault();
     try { this.canvas.setPointerCapture(event.pointerId); } catch { /* keep drawing without capture */ }
-    this.drawing = true;
     this.last = this.point(event);
+    this.drawing = Boolean(this.last);
   }
 
   move(event) {
     if (!this.drawing) return;
     const p = this.point(event);
+    if (!p) return;
     const ctx = this.ctx;
     ctx.strokeStyle = '#13234f';
     ctx.lineWidth = 5;
