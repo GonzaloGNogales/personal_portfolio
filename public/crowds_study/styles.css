@@ -72,7 +72,7 @@ h2 { font-size: 23px; }
 
 .status { color: var(--danger); font-size: 14px; }
 .status.info { color: var(--muted); }
-.status.centered { height: 22px; margin: 8px 0 0; }
+.status.centered { width: 100%; height: 22px; margin: 8px 0 0; line-height: 22px; text-align: center; }
 
 .actions { display: flex; justify-content: center; gap: 16px; }
 
@@ -130,6 +130,133 @@ h2 { font-size: 23px; }
 .prose ul, .prose ol { padding-left: 22px; margin: 2px 0; }
 .prose li { margin: 2px 0; }
 .prose .notice { background: #fff4d6; border: 1px solid #e8c567; border-radius: 8px; padding: 8px 12px; }
+
+/* ------------------------------------------------------------------ consent */
+
+.btn.wide-btn { width: 340px; }
+
+.consent-card { width: 1100px; height: 840px; padding: 22px 32px 20px; justify-content: space-between; }
+.consent-card h2 { height: 32px; }
+.consent-doc {
+  width: 100%;
+  height: 654px;
+  overflow-y: auto;
+  text-align: left;
+  background: #fafbfc;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 18px 28px;
+  font-size: 14.5px;
+  line-height: 1.5;
+  color: #2b3038;
+}
+.consent-doc .consent-logo { width: 150px; height: auto; display: block; margin-bottom: 10px; }
+.consent-doc h3 { font-size: 15.5px; text-align: center; margin: 6px 0 10px; }
+.consent-doc h4 { font-size: 14.5px; margin: 16px 0 4px; }
+.consent-doc h5 { font-size: 13.5px; margin: 12px 0 2px; letter-spacing: 0.02em; }
+.consent-doc p { margin: 6px 0; }
+.consent-doc ul { margin: 4px 0; padding-left: 22px; }
+.consent-doc .consent-project { margin: 4px 0; }
+.consent-doc .consent-contacts { padding-left: 16px; }
+.consent-hint { width: 100%; height: 22px; margin: 8px 0; font-size: 14px; text-align: center; }
+
+.sign-layout { width: 100%; height: 586px; display: grid; grid-template-columns: 470px 1fr; gap: 28px; text-align: left; }
+.sign-statement {
+  height: 586px;
+  overflow-y: auto;
+  background: #fafbfc;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px 20px;
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: #2b3038;
+}
+.sign-statement p { margin: 0 0 10px; }
+.sign-form { display: flex; flex-direction: column; gap: 12px; }
+.field { display: flex; flex-direction: column; gap: 4px; }
+.field-label { height: 18px; line-height: 18px; font-size: 13.5px; font-weight: 600; color: var(--muted); white-space: nowrap; overflow: hidden; }
+.field input[type="text"] {
+  height: 40px;
+  border: 1.5px solid #cfd4dc;
+  border-radius: 8px;
+  padding: 0 12px;
+  font-size: 15.5px;
+  font-family: inherit;
+  color: var(--text);
+  background: #fff;
+}
+.field input[type="text"]:focus { outline: none; border-color: var(--accent); }
+.field input[type="text"]:disabled { background: #f1f2f4; border-color: #e1e4e9; }
+.capacity-row { height: 30px; display: flex; gap: 22px; align-items: center; }
+.radio { width: 255px; display: flex; align-items: center; gap: 8px; font-size: 14.5px; cursor: pointer; white-space: nowrap; overflow: hidden; }
+.radio input, .accept input { width: 18px; height: 18px; margin: 0; accent-color: var(--accent); cursor: pointer; flex: none; }
+.field-row { display: grid; grid-template-columns: 1fr 180px; gap: 16px; }
+.date-value { height: 40px; display: flex; align-items: center; padding: 0 12px; font-size: 15.5px; background: #f1f2f4; border-radius: 8px; }
+.signature-pad { position: relative; width: 100%; height: 150px; border: 1.5px dashed #b9c0cb; border-radius: 8px; background: #fff; }
+.signature-pad canvas { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; cursor: crosshair; }
+.signature-hint { position: absolute; left: 12px; bottom: 8px; width: 300px; height: 18px; line-height: 18px; font-size: 12.5px; color: #9aa2ae; pointer-events: none; white-space: nowrap; overflow: hidden; }
+.signature-pad.signed .signature-hint { display: none; }
+.link-btn { position: absolute; right: 8px; top: 6px; width: 96px; text-align: right; border: none; background: none; color: var(--accent); font-size: 13.5px; font-family: inherit; cursor: pointer; padding: 4px 6px; }
+.minor-note { height: 38px; margin: 0; font-size: 12.5px; line-height: 1.45; color: var(--muted); }
+.accept {
+  width: 100%;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 16px;
+  background: var(--accent-soft);
+  border-radius: 8px;
+  text-align: left;
+  font-size: 14px;
+  line-height: 1.35;
+  cursor: pointer;
+}
+.accept span { flex: 1; height: 40px; display: flex; align-items: center; }
+.radio span { flex: 1; }
+.link-btn { height: 26px; line-height: 18px; }
+#consent-done-text { height: 104px; display: flex; align-items: center; justify-content: center; margin: 0; }
+#consent-code-line { height: 28px; margin: 6px 0 0; }
+#consent-save-status { height: 44px; }
+.exp-legend span { width: 50%; }
+.exp-legend span:last-child { text-align: right; }
+.demo-card .demo-warning { height: 60px; line-height: 20px; }
+.code-line { font-weight: 700; font-size: 18px; letter-spacing: 0.04em; }
+
+/* ------------------------------------------------------------------ demographics */
+
+.demo-card { width: 840px; height: 640px; padding: 30px 40px 26px; justify-content: space-between; }
+.demo-intro { width: 100%; height: 22px; margin: 0; font-size: 15px; }
+.demo-q { width: 100%; display: flex; flex-direction: column; gap: 8px; align-items: center; }
+.demo-q .field-label { width: 100%; height: 22px; line-height: 22px; font-size: 15px; color: var(--text); text-align: center; }
+.choice-row { display: grid; gap: 8px; justify-content: center; }
+.age-row { grid-template-columns: repeat(7, 100px); }
+.gender-row { grid-template-columns: repeat(4, 180px); }
+.exp-row { grid-template-columns: repeat(5, 88px); }
+.choice { cursor: pointer; }
+.choice input { position: absolute; opacity: 0; width: 1px; height: 1px; pointer-events: none; }
+.choice span {
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 0 6px;
+  border: 1.5px solid #cfd4dc;
+  border-radius: 8px;
+  background: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.15;
+}
+@media (hover: hover) {
+  .choice:hover span { background: var(--accent-soft); border-color: var(--accent); }
+}
+.choice input:checked + span { background: var(--accent); border-color: var(--accent); color: #fff; }
+.choice input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 2px; }
+.exp-legend { width: 456px; display: flex; justify-content: space-between; font-size: 12.5px; color: var(--muted); }
+.demo-warning { width: 100%; height: 60px; margin: 0; line-height: 20px; }
 
 /* ------------------------------------------------------------------ messages */
 
@@ -294,6 +421,46 @@ h2 { font-size: 23px; }
 .stage.mobile .message-text { height: 290px; font-size: 16px; }
 .stage.mobile .message-card > p { height: 72px; display: flex; align-items: center; justify-content: center; }
 .stage.mobile #end-offline p { height: 50px; display: flex; align-items: center; justify-content: center; }
+
+.stage.mobile .btn { white-space: normal; line-height: 1.15; font-size: 14.5px; }
+.stage.mobile .btn.wide-btn { width: auto; }
+
+.stage.mobile .consent-card { width: 396px; height: 896px; padding: 14px 14px 12px; }
+.stage.mobile .consent-card h2 { height: 30px; font-size: 19px; }
+.stage.mobile .consent-doc { height: 714px; padding: 12px 14px; font-size: 13.5px; }
+.stage.mobile .consent-doc .consent-logo { width: 120px; }
+.stage.mobile .consent-doc h3 { font-size: 14px; }
+.stage.mobile .consent-doc h4 { font-size: 13.5px; }
+.stage.mobile .consent-hint { height: 36px; margin: 6px 0; font-size: 12.5px; line-height: 1.4; }
+
+.stage.mobile .sign-layout { height: 600px; display: flex; flex-direction: column; gap: 8px; }
+.stage.mobile .sign-statement { height: 128px; flex: none; padding: 8px 10px; font-size: 12.5px; line-height: 1.45; }
+.stage.mobile .sign-form { gap: 7px; }
+.stage.mobile .field-label { height: 16px; line-height: 16px; font-size: 12.5px; }
+.stage.mobile .field input[type="text"] { height: 36px; font-size: 15px; }
+.stage.mobile .capacity-row { height: 52px; flex-direction: column; align-items: flex-start; gap: 4px; }
+.stage.mobile .radio { width: 100%; font-size: 13.5px; height: 24px; }
+.stage.mobile .field-row { grid-template-columns: 1fr 156px; gap: 10px; }
+.stage.mobile .date-value { height: 36px; font-size: 13px; padding: 0 8px; white-space: nowrap; overflow: hidden; }
+.stage.mobile .signature-pad { height: 108px; }
+.stage.mobile .minor-note { height: 34px; font-size: 11.5px; line-height: 1.4; }
+.stage.mobile .accept { height: 72px; padding: 0 12px; font-size: 12.5px; gap: 10px; }
+.stage.mobile .accept span { height: 66px; line-height: 1.32; }
+.stage.mobile .status.centered { height: 36px; line-height: 18px; font-size: 12.5px; margin-top: 4px; }
+.stage.mobile #consent-done-text { height: 200px; font-size: 15px; }
+.stage.mobile #consent-save-status { height: 44px; }
+.stage.mobile .consent-card h2 { height: 48px; font-size: 17px; display: flex; align-items: center; justify-content: center; }
+.stage.mobile .consent-card.sign-card h2 { height: 30px; }
+
+.stage.mobile .demo-card { width: 396px; height: 820px; padding: 24px 16px 18px; }
+.stage.mobile .demo-intro { height: 40px; font-size: 13.5px; display: flex; align-items: center; justify-content: center; }
+.stage.mobile .age-row { grid-template-columns: repeat(4, 84px); }
+.stage.mobile .gender-row { grid-template-columns: repeat(2, 176px); }
+.stage.mobile .exp-row { grid-template-columns: repeat(5, 64px); }
+.stage.mobile .choice span { font-size: 13px; }
+.stage.mobile .exp-legend { width: 352px; }
+.stage.mobile .demo-card .demo-warning { height: 100px; font-size: 13px; line-height: 18px; }
+.stage.mobile .demo-q .field-label { height: 20px; line-height: 20px; font-size: 14px; }
 
 .stage.mobile .anchor-layout { width: 396px; }
 .stage.mobile .anchor-layout h2 { font-size: 21px; }

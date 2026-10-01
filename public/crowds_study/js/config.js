@@ -18,6 +18,11 @@ export const CONFIG = {
   // from the protocol timings instead (about 25-30 minutes for N = 3).
   DISPLAYED_MINUTES: '15–20',
 
+  // Inside each block the trial order is random for every participant. When true, the
+  // shuffle is redrawn until no two consecutive videos share the same condition or the
+  // same crowd (so the same crowd is never seen twice in a row with different methods).
+  AVOID_CONSECUTIVE_REPEATS: true,
+
   // Practice trials (not analysed) before the scored blocks.
   N_PRACTICE: 2,
 

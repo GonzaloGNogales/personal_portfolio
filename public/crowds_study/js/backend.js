@@ -3,7 +3,7 @@
 // with ?offline=1) so the study can be tested locally.
 
 import { CONFIG, STUDY_VERSION } from './config.js';
-import { DESIGN_CELLS } from './design.js';
+import { DESIGN_CELLS, trialOrderSummary } from './design.js';
 
 export function isSupabaseConfigured() {
   return !CONFIG.SUPABASE_URL.startsWith('REPLACE_') && !CONFIG.SUPABASE_PUBLISHABLE_KEY.startsWith('REPLACE_');
@@ -24,7 +24,19 @@ class SupabaseBackend {
     this.token = null;
   }
 
-  async createSession({ language, client, device, layout }) {
+  // The signed consent PDF goes to the private "consents" bucket, named by participant
+  // code. The page can only upload: it can never list, read or overwrite files there.
+  async uploadConsent(code, pdfBytes) {
+    const { error } = await this.client.storage
+      .from('consents')
+      .upload(`${code}.pdf`, new Blob([pdfBytes], { type: 'application/pdf' }), {
+        contentType: 'application/pdf',
+        upsert: false
+      });
+    if (error) throw error;
+  }
+
+  async createSession({ language, client, device, layout, participant }) {
     const { data, error } = await this.client.rpc('create_participant_session', {
       p_language: language,
       p_user_agent: navigator.userAgent,
@@ -34,7 +46,14 @@ class SupabaseBackend {
       p_os: device.os,
       p_device_type: device.deviceType,
       p_browser: device.browser,
-      p_layout: layout
+      p_layout: layout,
+      p_participant_code: participant.code,
+      p_age_range: participant.ageRange,
+      p_gender: participant.gender,
+      p_experience: participant.experience,
+      p_consent_version: participant.consentVersion,
+      p_consent_signed_at: participant.consentSignedAt,
+      p_consent_on_behalf: participant.consentOnBehalf
     });
     if (error) throw error;
     const row = Array.isArray(data) ? data[0] : data;
@@ -48,7 +67,8 @@ class SupabaseBackend {
       p_session_token: this.token,
       p_scenario_order: design.scenarioOrder,
       p_variation_sequence: design.variationSequence,
-      p_used_variations: design.usedVariations
+      p_used_variations: design.usedVariations,
+      p_trial_order: trialOrderSummary(design)
     });
     if (error) throw error;
   }
@@ -91,7 +111,12 @@ class OfflineBackend {
     this.responses = [];
   }
 
-  async createSession({ language, client, device, layout }) {
+  async uploadConsent(code, pdfBytes) {
+    this.consentPdfBytes = pdfBytes.length;
+    console.info('[offline] consent PDF not uploaded', code, pdfBytes.length, 'bytes');
+  }
+
+  async createSession({ language, client, device, layout, participant }) {
     const requested = Number.parseInt(this.params.get('cell'), 10);
     const designCell = Number.isInteger(requested)
       ? ((requested % DESIGN_CELLS) + DESIGN_CELLS) % DESIGN_CELLS
@@ -100,6 +125,7 @@ class OfflineBackend {
       participantNumber: 0,
       designCell,
       language,
+      ...participant,
       ...device,
       layout,
       userAgent: navigator.userAgent,
@@ -115,6 +141,7 @@ class OfflineBackend {
     this.session.scenarioOrder = design.scenarioOrder;
     this.session.variationSequence = design.variationSequence;
     this.session.usedVariations = design.usedVariations;
+    this.session.trialOrder = trialOrderSummary(design);
   }
 
   async saveResponse(r) {

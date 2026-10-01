@@ -3,6 +3,8 @@ import { TEXT, LANGUAGE_NAMES, fill } from './i18n.js';
 import { buildDesign, SCENARIOS } from './design.js';
 import { createBackend } from './backend.js';
 import { detectDevice } from './device.js';
+import { CONSENT, CONSENT_VERSION, CONTACT_EMAIL } from './consent_text.js';
+import { consentHtml, buildConsentPdf, loadPdfLibs, newParticipantCode } from './consent.js';
 
 // URL parameters for testing. They only work when the page is opened from this computer
 // (localhost), so participants on the public site cannot use them:
@@ -169,6 +171,8 @@ function setLanguage(code) {
     counterExample: fill(t.counter, { n: 5, total: totalVideos() })
   });
   renderRatingText();
+  renderConsentText();
+  renderDemographicsText();
   fitStage();
 }
 
@@ -489,6 +493,294 @@ async function onNext() {
 }
 
 // ---------------------------------------------------------------------------
+// Informed consent (read, sign, save) and demographics, before the instructions.
+
+const AGE_RANGES = ['under_18', '18_24', '25_34', '35_44', '45_54', '55_64', '65_plus'];
+const GENDERS = ['woman', 'man', 'non_binary', 'prefer_not_to_say'];
+const EXPERIENCE = [1, 2, 3, 4, 5];
+
+// What is stored with the results (pseudonymised: the code, never the name).
+const participant = {
+  code: null,
+  consentVersion: CONSENT_VERSION,
+  consentSignedAt: null,
+  consentOnBehalf: null,
+  ageRange: null,
+  gender: null,
+  experience: null
+};
+let consentPdf = null;
+let consentUploaded = false;
+let signTouched = false;
+
+class SignaturePad {
+  constructor(canvas, onChange) {
+    this.canvas = canvas;
+    this.ctx = canvas.getContext('2d');
+    this.onChange = onChange;
+    this.ink = 0;
+    this.drawing = false;
+    canvas.addEventListener('pointerdown', e => this.start(e));
+    canvas.addEventListener('pointermove', e => this.move(e));
+    ['pointerup', 'pointercancel', 'pointerleave'].forEach(type => canvas.addEventListener(type, () => this.end()));
+  }
+
+  // Backing store at 2x the CSS size; reset only when the size changes (layout switch).
+  resize() {
+    const w = this.canvas.offsetWidth * 2;
+    const h = this.canvas.offsetHeight * 2;
+    if (!w || (this.canvas.width === w && this.canvas.height === h)) return;
+    this.canvas.width = w;
+    this.canvas.height = h;
+    this.clear();
+  }
+
+  point(event) {
+    const rect = this.canvas.getBoundingClientRect();
+    return {
+      x: (event.clientX - rect.left) * (this.canvas.width / rect.width),
+      y: (event.clientY - rect.top) * (this.canvas.height / rect.height)
+    };
+  }
+
+  start(event) {
+    event.preventDefault();
+    try { this.canvas.setPointerCapture(event.pointerId); } catch { /* keep drawing without capture */ }
+    this.drawing = true;
+    this.last = this.point(event);
+  }
+
+  move(event) {
+    if (!this.drawing) return;
+    const p = this.point(event);
+    const ctx = this.ctx;
+    ctx.strokeStyle = '#13234f';
+    ctx.lineWidth = 5;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.beginPath();
+    ctx.moveTo(this.last.x, this.last.y);
+    ctx.lineTo(p.x, p.y);
+    ctx.stroke();
+    this.ink += Math.hypot(p.x - this.last.x, p.y - this.last.y);
+    this.last = p;
+    this.onChange();
+  }
+
+  end() {
+    this.drawing = false;
+  }
+
+  clear() {
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    this.ink = 0;
+    this.onChange();
+  }
+
+  get signed() {
+    return this.ink > 60;
+  }
+
+  pngBytes() {
+    const binary = atob(this.canvas.toDataURL('image/png').split(',')[1]);
+    return Uint8Array.from(binary, c => c.charCodeAt(0));
+  }
+}
+let signaturePad = null;
+
+function formatLongDate(date) {
+  return new Intl.DateTimeFormat(lang === 'zh' ? 'zh-CN' : lang, { day: 'numeric', month: 'long', year: 'numeric' }).format(date);
+}
+
+function renderConsentText() {
+  const c = CONSENT[lang];
+  $('consent-doc').innerHTML = consentHtml(lang);
+  $('sign-title').textContent = c.form.title;
+  $('sign-statement').innerHTML = [c.form.iAm, c.form.wishes, c.form.statement]
+    .map((part, i) => `<p>${i === 0 ? `<strong>${escapeHtml(part)}</strong>` : escapeHtml(part)}</p>`).join('');
+  $('cap-self').textContent = c.form.ownName;
+  $('cap-behalf').textContent = c.form.onBehalf;
+  $('represented-label').textContent = c.form.representedName.replace(/[:：]\s*$/, '');
+  $('sign-date').textContent = formatLongDate(new Date());
+}
+
+function showConsentRead() {
+  show('screen-consent-read');
+  const doc = $('consent-doc');
+  doc.scrollTop = 0;
+  checkConsentScrolled();
+  loadPdfLibs().catch(() => {}); // warm up for the signing step
+}
+
+function checkConsentScrolled() {
+  const doc = $('consent-doc');
+  if (doc.scrollTop + doc.clientHeight >= doc.scrollHeight - 12) $('consent-read-next').disabled = false;
+}
+
+function showConsentSign() {
+  show('screen-consent-sign');
+  $('sign-date').textContent = formatLongDate(new Date());
+  $('sign-statement').scrollTop = 0;
+  signaturePad.resize();
+  updateSignForm();
+}
+
+function signValues() {
+  const capacity = document.querySelector('input[name="capacity"]:checked')?.value || null;
+  return {
+    fullName: $('sign-name').value.trim(),
+    capacity,
+    representedName: $('sign-represented').value.trim(),
+    place: $('sign-place').value.trim()
+  };
+}
+
+function signFormValid() {
+  const v = signValues();
+  return v.fullName.length >= 2 && v.capacity && (v.capacity === 'self' || v.representedName.length >= 2)
+    && v.place.length >= 2 && signaturePad.signed && $('sign-accept').checked;
+}
+
+function updateSignForm() {
+  const v = signValues();
+  const behalf = v.capacity === 'behalf';
+  $('sign-represented').disabled = !behalf;
+  $('represented-field').classList.toggle('muted', !behalf);
+  $('signature-canvas').parentElement.classList.toggle('signed', signaturePad.ink > 0);
+  const valid = signFormValid();
+  $('sign-submit').disabled = !valid;
+  const status = $('sign-status');
+  if (!status.classList.contains('busy')) status.textContent = signTouched && !valid ? text().signMissing : '';
+}
+
+function resetSignForm() {
+  ['sign-name', 'sign-represented', 'sign-place'].forEach(id => { $(id).value = ''; });
+  document.querySelectorAll('input[name="capacity"]').forEach(input => { input.checked = false; });
+  $('sign-accept').checked = false;
+  signTouched = false;
+  signaturePad.clear();
+}
+
+async function submitConsent() {
+  if (!signFormValid()) return;
+  const button = $('sign-submit');
+  const status = $('sign-status');
+  button.disabled = true;
+  status.classList.add('info', 'busy');
+  status.textContent = text().consentPreparing;
+  try {
+    const v = signValues();
+    const signedAt = new Date();
+    const code = newParticipantCode();
+    consentPdf = await buildConsentPdf({
+      lang,
+      code,
+      fullName: v.fullName,
+      onBehalf: v.capacity === 'behalf',
+      representedName: v.representedName,
+      place: v.place,
+      signedAt,
+      signaturePng: signaturePad.pngBytes()
+    });
+    Object.assign(participant, { code, consentSignedAt: signedAt.toISOString(), consentOnBehalf: v.capacity === 'behalf' });
+    consentUploaded = false;
+    status.classList.remove('info', 'busy');
+    status.textContent = '';
+    showConsentDone();
+    uploadConsentPdf();
+  } catch (error) {
+    console.error(error);
+    status.classList.remove('info', 'busy');
+    status.textContent = text().consentSaveError;
+    button.disabled = false;
+  }
+}
+
+function showConsentDone() {
+  const t = text();
+  show('screen-consent-done');
+  $('consent-done-text').textContent = fill(t.consentDoneText, { email: CONTACT_EMAIL });
+  $('consent-code-line').textContent = fill(t.consentCode, { code: participant.code });
+}
+
+async function uploadConsentPdf() {
+  const t = text();
+  const nextButton = $('consent-done-next');
+  const status = $('consent-save-status');
+  nextButton.disabled = true;
+  status.classList.add('info');
+  status.textContent = t.consentSaving;
+  try {
+    backend = backend || createBackend(params);
+    await backend.uploadConsent(participant.code, consentPdf);
+    consentUploaded = true;
+    status.textContent = '';
+    nextButton.textContent = t.continueBtn;
+  } catch (error) {
+    console.error(error);
+    status.classList.remove('info');
+    status.textContent = t.consentSaveError;
+    nextButton.textContent = t.retryBtn;
+  } finally {
+    nextButton.disabled = false;
+  }
+}
+
+function downloadConsentPdf() {
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(new Blob([consentPdf], { type: 'application/pdf' }));
+  link.download = `consent_${participant.code}.pdf`;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  setTimeout(() => URL.revokeObjectURL(link.href), 4000);
+}
+
+function buildChoiceRow(containerId, name, values) {
+  const container = $(containerId);
+  values.forEach(value => {
+    const label = document.createElement('label');
+    label.className = 'choice';
+    const input = document.createElement('input');
+    input.type = 'radio';
+    input.name = name;
+    input.value = value;
+    const span = document.createElement('span');
+    span.dataset.value = value;
+    label.append(input, span);
+    container.appendChild(label);
+  });
+}
+
+function buildDemographics() {
+  buildChoiceRow('age-options', 'age', AGE_RANGES);
+  buildChoiceRow('gender-options', 'gender', GENDERS);
+  buildChoiceRow('exp-options', 'experience', EXPERIENCE);
+}
+
+function renderDemographicsText() {
+  const t = text();
+  document.querySelectorAll('#age-options span').forEach(span => { span.textContent = t.ages[span.dataset.value]; });
+  document.querySelectorAll('#gender-options span').forEach(span => { span.textContent = t.genders[span.dataset.value]; });
+  document.querySelectorAll('#exp-options span').forEach(span => { span.textContent = span.dataset.value; });
+  if (participant.code) updateDemographics();
+}
+
+function updateDemographics() {
+  const pick = name => document.querySelector(`input[name="${name}"]:checked`)?.value || null;
+  participant.ageRange = pick('age');
+  participant.gender = pick('gender');
+  const experience = pick('experience');
+  participant.experience = experience ? Number(experience) : null;
+  // A minor must be signed for by a parent or guardian ("on behalf of another person").
+  const minorSignedAlone = participant.ageRange === 'under_18' && !participant.consentOnBehalf;
+  $('demo-warning').textContent = minorSignedAlone ? text().minorWarning : '';
+  $('demo-resign').hidden = !minorSignedAlone;
+  $('demo-back').hidden = minorSignedAlone;
+  $('demo-next').disabled = !participant.ageRange || !participant.experience || minorSignedAlone;
+}
+
+// ---------------------------------------------------------------------------
 // Session start and end
 
 function clientInfo() {
@@ -515,7 +807,8 @@ async function beginStudy() {
       language: lang,
       client: clientInfo(),
       device: detectDevice(),
-      layout
+      layout,
+      participant
     });
     design = buildDesign(designCell, CONFIG.N_VARIATIONS);
     await backend.saveDesign(design);
@@ -570,7 +863,39 @@ function downloadOfflineResponses() {
 // they always get the desktop canvas.
 let stageScale = 1;
 let layout = 'desktop';
+let stageBase = { x: 0, y: 0 };
+let stageShift = 0;
+let fittedWidth = 0;
+
+function applyStageTransform() {
+  $('stage').style.transform = `translate(${stageBase.x}px, ${stageBase.y + stageShift}px) scale(${stageScale})`;
+}
+
+function typingInField() {
+  return document.activeElement?.matches?.('input[type="text"]');
+}
+
+// On phones the on-screen keyboard shrinks the window while a field is focused. Keep the
+// layout as it is, and slide the page up just enough to keep the field visible.
+function keepFocusedFieldVisible() {
+  const field = typingInField() ? document.activeElement : null;
+  const viewport = window.visualViewport;
+  if (!field || !viewport) {
+    if (stageShift) { stageShift = 0; applyStageTransform(); }
+    return;
+  }
+  const bottom = field.getBoundingClientRect().bottom;
+  const visibleBottom = viewport.offsetTop + viewport.height - 12;
+  if (bottom > visibleBottom) { stageShift -= bottom - visibleBottom; applyStageTransform(); }
+}
+
 function fitStage() {
+  if (typingInField() && layout === 'mobile' && innerWidth === fittedWidth) {
+    keepFocusedFieldVisible();
+    return;
+  }
+  fittedWidth = innerWidth;
+  stageShift = 0;
   const portrait = innerHeight > innerWidth;
   layout = portrait && innerWidth < CONFIG.MOBILE_MAX_WIDTH ? 'mobile' : 'desktop';
   const w = layout === 'mobile' ? CONFIG.MOBILE_STAGE_WIDTH : CONFIG.STAGE_WIDTH;
@@ -580,9 +905,9 @@ function fitStage() {
   stage.style.width = `${w}px`;
   stage.style.height = `${h}px`;
   stageScale = Math.min(innerWidth / w, innerHeight / h);
-  const x = (innerWidth - w * stageScale) / 2;
-  const y = (innerHeight - h * stageScale) / 2;
-  stage.style.transform = `translate(${x}px, ${y}px) scale(${stageScale})`;
+  stageBase = { x: (innerWidth - w * stageScale) / 2, y: (innerHeight - h * stageScale) / 2 };
+  applyStageTransform();
+  if (signaturePad && !$('screen-consent-sign').hidden) signaturePad.resize();
 
   const tooSmall = stageScale < CONFIG.MIN_SCALE;
   const sidewaysPhone = !portrait && matchMedia('(pointer: coarse)').matches;
@@ -600,12 +925,41 @@ function frame() {
 // Wiring
 
 function init() {
+  signaturePad = new SignaturePad($('signature-canvas'), () => { signTouched = true; updateSignForm(); });
+  try {
+    backend = createBackend(params);
+  } catch (error) {
+    console.error(error); // retried when the consent is uploaded
+  }
   renderLanguageButtons();
   buildRatingGrid();
+  buildDemographics();
   setLanguage(lang);
 
-  $('start-continue').addEventListener('click', () => show('screen-instructions'));
-  $('instructions-back').addEventListener('click', () => show('screen-start'));
+  $('start-continue').addEventListener('click', showConsentRead);
+
+  $('consent-read-back').addEventListener('click', () => show('screen-start'));
+  $('consent-read-next').addEventListener('click', showConsentSign);
+  $('consent-doc').addEventListener('scroll', checkConsentScrolled, { passive: true });
+
+  $('sign-back').addEventListener('click', showConsentRead);
+  $('sign-submit').addEventListener('click', submitConsent);
+  $('signature-clear').addEventListener('click', () => signaturePad.clear());
+  $('screen-consent-sign').addEventListener('input', () => { signTouched = true; updateSignForm(); });
+  $('screen-consent-sign').addEventListener('change', () => { signTouched = true; updateSignForm(); });
+
+  $('consent-download').addEventListener('click', downloadConsentPdf);
+  $('consent-done-next').addEventListener('click', () => {
+    if (!consentUploaded) uploadConsentPdf();
+    else show('screen-demographics');
+  });
+
+  $('screen-demographics').addEventListener('change', updateDemographics);
+  $('demo-back').addEventListener('click', () => show('screen-consent-done'));
+  $('demo-resign').addEventListener('click', () => { resetSignForm(); showConsentSign(); });
+  $('demo-next').addEventListener('click', () => show('screen-instructions'));
+
+  $('instructions-back').addEventListener('click', () => show('screen-demographics'));
   $('instructions-begin').addEventListener('click', beginStudy);
   $('anchor-continue').addEventListener('click', () => {
     anchorTiles.forEach(tile => tile.video.pause());
@@ -638,6 +992,9 @@ function init() {
   });
 
   window.addEventListener('resize', fitStage);
+  window.visualViewport?.addEventListener('resize', keepFocusedFieldVisible);
+  document.addEventListener('focusin', () => setTimeout(keepFocusedFieldVisible, 350));
+  document.addEventListener('focusout', () => setTimeout(() => { if (!typingInField()) fitStage(); }, 100));
   window.addEventListener('beforeunload', event => {
     if (!studyRunning) return;
     event.preventDefault();
