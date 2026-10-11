@@ -499,10 +499,11 @@ const AGE_RANGES = ['under_18', '18_24', '25_34', '35_44', '45_54', '55_64', '65
 const GENDERS = ['woman', 'man', 'non_binary', 'prefer_not_to_say'];
 const EXPERIENCE = [1, 2, 3, 4, 5];
 
-// What is stored with the results (pseudonymised: the code, never the name).
+// What is stored with the results (pseudonymised: the code, never the name). Fields of
+// switched-off steps (config REQUIRE_CONSENT / ASK_DEMOGRAPHICS) stay null.
 const participant = {
   code: null,
-  consentVersion: CONSENT_VERSION,
+  consentVersion: CONFIG.REQUIRE_CONSENT ? CONSENT_VERSION : null,
   consentSignedAt: null,
   consentOnBehalf: null,
   ageRange: null,
@@ -765,7 +766,7 @@ function renderDemographicsText() {
   document.querySelectorAll('#age-options span').forEach(span => { span.textContent = t.ages[span.dataset.value]; });
   document.querySelectorAll('#gender-options span').forEach(span => { span.textContent = t.genders[span.dataset.value]; });
   document.querySelectorAll('#exp-options span').forEach(span => { span.textContent = span.dataset.value; });
-  if (participant.code) updateDemographics();
+  if (participant.code && CONFIG.ASK_DEMOGRAPHICS) updateDemographics();
 }
 
 function updateDemographics() {
@@ -775,11 +776,18 @@ function updateDemographics() {
   const experience = pick('experience');
   participant.experience = experience ? Number(experience) : null;
   // A minor must be signed for by a parent or guardian ("on behalf of another person").
-  const minorSignedAlone = participant.ageRange === 'under_18' && !participant.consentOnBehalf;
+  const minorSignedAlone = CONFIG.REQUIRE_CONSENT && participant.ageRange === 'under_18' && !participant.consentOnBehalf;
   $('demo-warning').textContent = minorSignedAlone ? text().minorWarning : '';
   $('demo-resign').hidden = !minorSignedAlone;
   $('demo-back').hidden = minorSignedAlone;
   $('demo-next').disabled = !participant.ageRange || !participant.experience || minorSignedAlone;
+}
+
+// After the consent (or straight after the language screen when it is switched off).
+// Every participant gets a random code, with or without a signed consent.
+function showAfterConsent() {
+  participant.code ??= newParticipantCode();
+  show(CONFIG.ASK_DEMOGRAPHICS ? 'screen-demographics' : 'screen-instructions');
 }
 
 // ---------------------------------------------------------------------------
@@ -938,7 +946,10 @@ function init() {
   buildDemographics();
   setLanguage(lang);
 
-  $('start-continue').addEventListener('click', showConsentRead);
+  $('start-continue').addEventListener('click', () => {
+    if (CONFIG.REQUIRE_CONSENT) showConsentRead();
+    else showAfterConsent();
+  });
 
   $('consent-read-back').addEventListener('click', () => show('screen-start'));
   $('consent-read-next').addEventListener('click', showConsentSign);
@@ -953,15 +964,18 @@ function init() {
   $('consent-download').addEventListener('click', downloadConsentPdf);
   $('consent-done-next').addEventListener('click', () => {
     if (!consentUploaded) uploadConsentPdf();
-    else show('screen-demographics');
+    else showAfterConsent();
   });
 
   $('screen-demographics').addEventListener('change', updateDemographics);
-  $('demo-back').addEventListener('click', () => show('screen-consent-done'));
+  $('demo-back').addEventListener('click', () => show(CONFIG.REQUIRE_CONSENT ? 'screen-consent-done' : 'screen-start'));
   $('demo-resign').addEventListener('click', () => { resetSignForm(); showConsentSign(); });
   $('demo-next').addEventListener('click', () => show('screen-instructions'));
 
-  $('instructions-back').addEventListener('click', () => show('screen-demographics'));
+  $('instructions-back').addEventListener('click', () => {
+    if (CONFIG.ASK_DEMOGRAPHICS) show('screen-demographics');
+    else show(CONFIG.REQUIRE_CONSENT ? 'screen-consent-done' : 'screen-start');
+  });
   $('instructions-begin').addEventListener('click', beginStudy);
   $('anchor-continue').addEventListener('click', () => {
     anchorTiles.forEach(tile => tile.video.pause());

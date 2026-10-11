@@ -7,6 +7,15 @@ export const CONFIG = {
   SUPABASE_URL: 'https://huuafcsaxeiqimdvjkor.supabase.co',
   SUPABASE_PUBLISHABLE_KEY: 'sb_publishable_MBwdJSsOqSMy1gAWbiuczQ_FJ4bMbC9',
 
+  // Screens between the language choice and the instructions:
+  //   REQUIRE_CONSENT   information sheet + signed consent form; the signed PDF is
+  //                     uploaded to Supabase Storage and offered for download.
+  //   ASK_DEMOGRAPHICS  age range, gender (optional), experience with 3D apps and games.
+  // With both false the study goes from the language screen straight to the
+  // instructions. They can be switched independently.
+  REQUIRE_CONSENT: false,
+  ASK_DEMOGRAPHICS: false,
+
   // Folder with the clips, relative to index.html.
   VIDEO_BASE: 'videos/',
 
