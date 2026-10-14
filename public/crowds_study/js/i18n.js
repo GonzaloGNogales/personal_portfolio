@@ -119,7 +119,7 @@ export const TEXT = {
     downloadBtn: 'Download responses (JSON)',
 
     s1: 'The crowd moves like a real crowd (overall motion, trajectories, distribution of individuals, interpersonal distances, etc.).',
-    s2: "The movement of individuals affects their neighbors' reactions.",
+    s2: 'The movement of each person affects how the people around them react.',
     s3: 'Such contacts between individuals could be observed in real situations.',
     scale: {
       1: 'Strongly disagree',
@@ -246,7 +246,7 @@ export const TEXT = {
     downloadBtn: 'Télécharger les réponses (JSON)',
 
     s1: 'La foule se déplace comme une vraie foule (mouvement général, trajectoires, répartition des individus, distances interpersonnelles, etc.).',
-    s2: 'Le mouvement des individus influence les réactions de leurs voisins.',
+    s2: 'Le mouvement de chaque personne influence la façon dont réagissent les personnes qui l’entourent.',
     s3: 'De tels contacts entre individus pourraient être observés dans des situations réelles.',
     scale: {
       1: 'Pas du tout d’accord',
@@ -373,7 +373,7 @@ export const TEXT = {
     downloadBtn: 'Descargar respuestas (JSON)',
 
     s1: 'La multitud se mueve como una multitud real (movimiento general, trayectorias, distribución de los individuos, distancias interpersonales, etc.).',
-    s2: 'El movimiento de los individuos afecta a las reacciones de sus vecinos.',
+    s2: 'El movimiento de cada persona influye en cómo reaccionan las personas que tiene alrededor.',
     s3: 'Este tipo de contactos entre individuos podría observarse en situaciones reales.',
     scale: {
       1: 'Totalmente en desacuerdo',
@@ -500,7 +500,7 @@ export const TEXT = {
     downloadBtn: '下载回答（JSON）',
 
     s1: '人群的移动方式像真实的人群（整体运动、行进轨迹、个体分布、人际距离等）。',
-    s2: '个体的移动会影响其周围人的反应。',
+    s2: '每个人的移动都会影响其周围的人如何做出反应。',
     s3: '个体之间的这种接触在真实情境中也可能出现。',
     scale: {
       1: '非常不同意',
