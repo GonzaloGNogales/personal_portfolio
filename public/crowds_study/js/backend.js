@@ -24,18 +24,6 @@ class SupabaseBackend {
     this.token = null;
   }
 
-  // The signed consent PDF goes to the private "consents" bucket, named by participant
-  // code. The page can only upload: it can never list, read or overwrite files there.
-  async uploadConsent(code, pdfBytes) {
-    const { error } = await this.client.storage
-      .from('consents')
-      .upload(`${code}.pdf`, new Blob([pdfBytes], { type: 'application/pdf' }), {
-        contentType: 'application/pdf',
-        upsert: false
-      });
-    if (error) throw error;
-  }
-
   async createSession({ language, client, device, layout, participant }) {
     const { data, error } = await this.client.rpc('create_participant_session', {
       p_language: language,
@@ -109,11 +97,6 @@ class OfflineBackend {
     this.params = params;
     this.session = null;
     this.responses = [];
-  }
-
-  async uploadConsent(code, pdfBytes) {
-    this.consentPdfBytes = pdfBytes.length;
-    console.info('[offline] consent PDF not uploaded', code, pdfBytes.length, 'bytes');
   }
 
   async createSession({ language, client, device, layout, participant }) {

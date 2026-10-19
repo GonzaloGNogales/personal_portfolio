@@ -7,15 +7,6 @@ export const CONFIG = {
   SUPABASE_URL: 'https://huuafcsaxeiqimdvjkor.supabase.co',
   SUPABASE_PUBLISHABLE_KEY: 'sb_publishable_MBwdJSsOqSMy1gAWbiuczQ_FJ4bMbC9',
 
-  // Screens between the language choice and the instructions:
-  //   REQUIRE_CONSENT   information sheet + signed consent form; the signed PDF is
-  //                     uploaded to Supabase Storage and offered for download.
-  //   ASK_DEMOGRAPHICS  age range, gender (optional), experience with 3D apps and games.
-  // With both false the study goes from the language screen straight to the
-  // instructions. They can be switched independently.
-  REQUIRE_CONSENT: false,
-  ASK_DEMOGRAPHICS: false,
-
   // Folder with the clips, relative to index.html.
   VIDEO_BASE: 'videos/',
 
@@ -23,9 +14,9 @@ export const CONFIG = {
   // 48 scored videos (about 25-30 minutes in total).
   N_VARIATIONS: 3,
 
-  // Duration shown to participants (minutes). Set to null to show the estimate computed
-  // from the protocol timings instead (about 25-30 minutes for N = 3).
-  DISPLAYED_MINUTES: '15–20',
+  // Duration shown to participants (minutes); matches the information sheet. Set to
+  // null to show the estimate computed from the protocol timings instead.
+  DISPLAYED_MINUTES: '25–30',
 
   // Inside each block the trial order is random for every participant. When true, the
   // shuffle is redrawn until no two consecutive videos share the same condition or the
