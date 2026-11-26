@@ -60,7 +60,7 @@
     "year": 2026,
     "primaryUrl": "https://arxiv.org/abs/2601.22301",
     "projectUrl": "https://gonzalognogales.github.io/coarse2real/",
-    "teaser": "publications/C2Rteaser.jpg",
+    "teaser": "publications/C2Rteaser.webp",
     "teaserFit": "contain",
     "pdfAsset": "publications/C2Rpaper.pdf",
     "abstract": "Traditional rendering pipelines rely on complex assets, accurate materials and lighting, and substantial computational resources to produce realistic imagery, yet they still face challenges in scalability and realism for populated dynamic scenes. We present C2R (Coarse-to-Real), a generative rendering framework that synthesizes real-style urban crowd videos from coarse 3D simulations. Our approach uses coarse 3D renderings to explicitly control scene layout, camera motion, and human trajectories, while a learned neural renderer generates realistic appearance, lighting, and fine-scale dynamics guided by text prompts. To overcome the lack of paired training data between coarse simulations and real videos, we adopt a two-stage synthetic-real domain-hedging strategy that first learns a strong generative prior from large-scale real footage, and then introduces controllability by using a small amount of paired synthetic coarse-to-fine data to anchor shared implicit spatio-temporal features across domains. The resulting system supports coarse-to-fine control, generalizes across diverse CG and game inputs, and produces temporally consistent, controllable, and realistic urban scene videos from minimal 3D input."
@@ -195,7 +195,7 @@
     "venue": "ACM Transactions on Graphics (SIGGRAPH Asia)",
     "year": 2024,
     "primaryUrl": "https://doi.org/10.1145/3687266",
-    "teaser": "publications/RCID3DCAteaser.jpg",
+    "teaser": "publications/RCID3DCAteaser.webp",
     "teaserFit": "contain",
     "pdfAsset": "publications/RCID3DCApaper.pdf",
     "videoUrl": "https://www.youtube.com/watch?v=gP8FFeKRqx0&ab_channel=DanCasas",
