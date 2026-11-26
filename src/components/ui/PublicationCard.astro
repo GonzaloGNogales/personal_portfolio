@@ -19,12 +19,12 @@ const { publication, compact = false, showAbstract = false } = Astro.props
 const teaser = compact ? undefined : getPublicationTeaser(publication.teaser)
 const teaserUrl = compact ? undefined : publication.teaserUrl
 const hasTeaser = Boolean(teaser || teaserUrl)
-const pdfHref = getPublicationPdf(publication.pdfAsset)
+// One "Paper" button per card: the bundled PDF when there is one, otherwise the external paper link.
+const paperHref = getPublicationPdf(publication.pdfAsset) ?? publication.paperUrl
 const teaserFit = publication.teaserFit ?? 'cover'
 
 const actions: Action[] = [
-	pdfHref && { label: 'PDF', href: pdfHref, className: 'publication-link--pdf' },
-	publication.paperUrl && { label: 'Paper', href: publication.paperUrl, className: 'publication-link--paper' },
+	paperHref && { label: 'Paper', href: paperHref, className: 'publication-link--paper' },
 	publication.videoUrl && { label: 'Video', href: publication.videoUrl, className: 'publication-link--video' },
 	publication.projectUrl && { label: 'Project', href: publication.projectUrl, className: 'publication-link--project' },
 ].filter((action): action is Action => Boolean(action))
@@ -138,11 +138,6 @@ const actions: Action[] = [
 		transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease;
 	}
 
-	.publication-link--pdf {
-		border-color: #e84855;
-		color: #c82d3b;
-	}
-
 	.publication-link--paper {
 		border-color: #e84855;
 		color: #c82d3b;
@@ -161,11 +156,6 @@ const actions: Action[] = [
 	.publication-link:hover,
 	.publication-link:focus-visible {
 		color: white;
-	}
-
-	.publication-link--pdf:hover,
-	.publication-link--pdf:focus-visible {
-		background-color: #e84855;
 	}
 
 	.publication-link--paper:hover,
