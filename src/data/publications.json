@@ -1,5 +1,71 @@
 [
   {
+    "id": "coarse2real-sharp",
+    "title": "Pair-Free Coarse-to-Real Video Generation via Real-to-Coarse Image Supervision",
+    "authors": [
+      {
+        "name": "Gonzalo Gómez-Nogales",
+        "highlighted": true
+      },
+      {
+        "name": "Daohan Lu"
+      },
+      {
+        "name": "Peiye Zhuang"
+      },
+      {
+        "name": "Tinghui Zhou"
+      },
+      {
+        "name": "Yi Zhou"
+      }
+    ],
+    "venue": "arXiv preprint",
+    "year": 2026,
+    "primaryUrl": "https://arxiv.org/abs/2610.28954",
+    "teaser": "publications/C2RSHARPteaser.webp",
+    "teaserFit": "contain",
+    "paperUrl": "https://arxiv.org/pdf/2610.28954",
+    "projectUrl": "https://gonzalognogales.github.io/coarse2real-sharp/",
+    "abstract": "Coarse-to-real (C2R) video generation converts coarse animation, simulation, or game-rendered videos into photorealistic videos while preserving scene layout, camera motion, and dynamics. Training such models requires aligned (coarse, realistic) video pairs, which are expensive to create and confine prior systems to narrow synthetic domains. We exploit a simple asymmetry: paired videos are hard to obtain, but paired real-to-coarse images are easy to construct with existing editing and 3D reconstruction tools. Using these image pairs, we train the DINO-R2C model to transfer realistic images to coarse images in DINO feature space, and apply it frame-wise to ordinary real videos to synthesize pseudo-coarse videos. The C2R# model then learns to generate each real video from its pseudo-coarse counterpart, free from needing (coarse, realistic) video pairs. At inference, the DINO-R2C model is discarded and actual coarse videos drive the C2R# model directly. Thus, our pair-free training scales with any real-video corpora rather than with paired synthetic videos."
+  },
+  {
+    "id": "coarse2real",
+    "title": "Coarse-to-Real: Generative Rendering for Populated Dynamic Scenes",
+    "authors": [
+      {
+        "name": "Gonzalo Gomez-Nogales",
+        "highlighted": true
+      },
+      {
+        "name": "Yicong Hong"
+      },
+      {
+        "name": "Chongjian Ge"
+      },
+      {
+        "name": "Peiye Zhuang"
+      },
+      {
+        "name": "Marc Comino-Trinidad"
+      },
+      {
+        "name": "Dan Casas"
+      },
+      {
+        "name": "Yi Zhou"
+      }
+    ],
+    "venue": "Neural Information Processing Systems (NeurIPS)",
+    "year": 2026,
+    "primaryUrl": "https://arxiv.org/abs/2601.22301",
+    "projectUrl": "https://gonzalognogales.github.io/coarse2real/",
+    "teaser": "publications/C2Rteaser.jpg",
+    "teaserFit": "contain",
+    "pdfAsset": "publications/C2Rpaper.pdf",
+    "abstract": "Traditional rendering pipelines rely on complex assets, accurate materials and lighting, and substantial computational resources to produce realistic imagery, yet they still face challenges in scalability and realism for populated dynamic scenes. We present C2R (Coarse-to-Real), a generative rendering framework that synthesizes real-style urban crowd videos from coarse 3D simulations. Our approach uses coarse 3D renderings to explicitly control scene layout, camera motion, and human trajectories, while a learned neural renderer generates realistic appearance, lighting, and fine-scale dynamics guided by text prompts. To overcome the lack of paired training data between coarse simulations and real videos, we adopt a two-stage synthetic-real domain-hedging strategy that first learns a strong generative prior from large-scale real footage, and then introduces controllability by using a small amount of paired synthetic coarse-to-fine data to anchor shared implicit spatio-temporal features across domains. The resulting system supports coarse-to-fine control, generalizes across diverse CG and game inputs, and produces temporally consistent, controllable, and realistic urban scene videos from minimal 3D input."
+  },
+  {
     "id": "gnochi",
     "title": "GNOCHI: Generative Neural mOdel for Close Human-Human Interactions",
     "authors": [
@@ -29,42 +95,6 @@
     "paperUrl": "https://arxiv.org/pdf/2607.10408",
     "projectUrl": "https://gonzalogn.com/GNOCHI/",
     "abstract": "Creating realistic 3D human-human interactions is challenging because human bodies have many degrees of freedom and generated poses must remain physically plausible and collision-free. GNOCHI introduces a conditional variational autoencoder that generates diverse reaction poses for one human conditioned on the pose of another. The method addresses limited interaction data through automated, physically plausible pose augmentation and uses a collision-aware self-supervised loss based on volumetric proxies. It produces a wide variety of controlled, plausible close-contact interactions that existing methods cannot generate reliably."
-  },
-  {
-    "id": "coarse2real",
-    "title": "Coarse-to-Real: Generative Rendering for Populated Dynamic Scenes",
-    "authors": [
-      {
-        "name": "Gonzalo Gomez-Nogales",
-        "highlighted": true
-      },
-      {
-        "name": "Yicong Hong"
-      },
-      {
-        "name": "Chongjian Ge"
-      },
-      {
-        "name": "Peiye Zhuang"
-      },
-      {
-        "name": "Marc Comino-Trinidad"
-      },
-      {
-        "name": "Dan Casas"
-      },
-      {
-        "name": "Yi Zhou"
-      }
-    ],
-    "venue": "arXiv preprint",
-    "year": 2026,
-    "primaryUrl": "https://arxiv.org/abs/2601.22301",
-    "projectUrl": "https://gonzalognogales.github.io/coarse2real/",
-    "teaser": "publications/C2Rteaser.jpg",
-    "teaserFit": "contain",
-    "pdfAsset": "publications/C2Rpaper.pdf",
-    "abstract": "Traditional rendering pipelines rely on complex assets, accurate materials and lighting, and substantial computational resources to produce realistic imagery, yet they still face challenges in scalability and realism for populated dynamic scenes. We present C2R (Coarse-to-Real), a generative rendering framework that synthesizes real-style urban crowd videos from coarse 3D simulations. Our approach uses coarse 3D renderings to explicitly control scene layout, camera motion, and human trajectories, while a learned neural renderer generates realistic appearance, lighting, and fine-scale dynamics guided by text prompts. To overcome the lack of paired training data between coarse simulations and real videos, we adopt a two-stage synthetic-real domain-hedging strategy that first learns a strong generative prior from large-scale real footage, and then introduces controllability by using a small amount of paired synthetic coarse-to-fine data to anchor shared implicit spatio-temporal features across domains. The resulting system supports coarse-to-fine control, generalizes across diverse CG and game inputs, and produces temporally consistent, controllable, and realistic urban scene videos from minimal 3D input."
   },
   {
     "id": "bim",

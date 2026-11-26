@@ -27,7 +27,6 @@ export const internships = [
 		title: 'Applied Scientist Intern',
 		location: 'San Mateo, California, USA',
 		description: '',
-		current: true,
 	},
 ] satisfies Internship[]
 
